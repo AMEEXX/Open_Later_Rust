@@ -9,7 +9,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
             title TEXT NOT NULL,
             message TEXT NOT NULL,
             unlock_at TIMESTAMPTZ NOT NULL,
-            created_at TIMESTAMPTZ DEFAULT NOW()
+            created_at TIMESTAMPTZ DEFAULT NOW(),
             is_unlocked BOOLEAN DEFAULT FALSE,
             email_sent BOOLEAN DEFAULT FALSE
     );

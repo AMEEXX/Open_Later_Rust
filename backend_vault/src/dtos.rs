@@ -12,10 +12,10 @@ pub struct Capsule {
     pub email: String,
     pub title: String,
     pub message: String,
-    pub unlock_at: DateTime<Utc>,
-    pub created_at:DateTime<Utc>,
-    pub is_unlocked: bool,
-    pub email_sent: bool,
+    pub unlock_at: Option<DateTime<Utc>>,  
+    pub created_at: Option<DateTime<Utc>>,
+    pub is_unlocked: Option<bool>, 
+    pub email_sent: Option<bool>,
 }
 #[derive(Debug, Deserialize, Validate)]
 
@@ -57,9 +57,9 @@ impl From<Capsule> for CapsuleDto{
             title: c.title, 
             email: c.email, 
             message: c.message, 
-            unlock_at: c.unlock_at, 
-            is_unlocked: c.is_unlocked, 
-            email_sent: c.email_sent }
+            unlock_at: c.unlock_at.expect("the unlock time needs to be set"), 
+            is_unlocked: c.is_unlocked.unwrap(), 
+            email_sent: c.email_sent.unwrap() }
 
     }
 

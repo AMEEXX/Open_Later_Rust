@@ -26,9 +26,9 @@ pub trait TableExt {
         public_id: &str,
     ) -> Result<Capsule, Error>;
 
-    async fn get_all_capsule(&self) -> Result<Vec<Capsule>, Error>;
+    async fn get_all_capsules(&self) -> Result<Vec<Capsule>, Error>;
 
-    async fn get_by_pub_id(&self, public_id: &str) -> Result<Option<Vec<Capsule>>, Error>;
+    async fn get_capsule_by_public_id(&self, public_id: &str) -> Result<Option<Capsule>, Error>;
 }
 #[async_trait]
 impl TableExt for DBClient {
@@ -57,14 +57,41 @@ impl TableExt for DBClient {
             email,
             title,
             message,
-            unlock_at
+            unlock_at,
+            
         )
         .fetch_one(&self.pool)
         .await?;
-    Ok(row);
+    Ok(row)
     }
 
-    async fn get_all_capsule(&self) -> Result<Vec<Capsule>, Error> {}
+    async fn get_all_capsules(&self) -> Result<Vec<Capsule>, Error> {
+        let capsules = query_as!(
+            Capsule,
+            r#"
+            SELECT * FROM capsules
+            ORDER BY created_at DESC
+            "#
+        )
+        .fetch_all(&self.pool)
+        .await?;
+        
+        Ok(capsules)
+    }
 
-    async fn get_by_pub_id(&self, public_id: &str) -> Result<Option<Vec<Capsule>>, Error> {}
+    async fn get_capsule_by_public_id(&self, public_id: &str) -> Result<Option<Capsule>, Error> {
+        let result = query_as!(
+            Capsule,
+            r#"
+            SELECT *
+            FROM capsules
+            WHERE public_id = $1
+            "#,
+            public_id
+        )
+        .fetch_optional(&self.pool)
+        .await?;
+
+        Ok(result)
+    }
 }

@@ -60,5 +60,5 @@ async fn main() {
 }
 
 async fn hello() -> &'static str {
-    "Hello, world!"
+    "The server and the databases are connected"
 }

@@ -1,11 +1,12 @@
 mod config;
 use std::{net::SocketAddr, sync::Arc};
 
-use axum::{http::{header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE}, HeaderValue, Method}, Extension, Router};
+use axum::{http::{header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE}, HeaderValue, Method}, routing::get, Extension, Router};
+
 use crate::db::DBClient;
 use dotenv::dotenv;
 use config::Config;
-use sqlx::postgres::{PgListener, PgPoolOptions};
+use sqlx::postgres::{PgPoolOptions};
 use tower_http::cors::CorsLayer;
 use tracing_subscriber::filter::LevelFilter;
 mod dtos;
@@ -15,7 +16,7 @@ mod db;
 #[derive(Debug,Clone)]
 pub struct AppState{
     pub env : Config,
-    pub db_client : DBClient,
+    pub db_client :Arc<DBClient>,
 }
 
 #[tokio::main]
@@ -39,8 +40,8 @@ async fn main() {
     let cors = CorsLayer::new().allow_headers([AUTHORIZATION,CONTENT_TYPE,ACCEPT]).allow_methods([Method::GET, Method::POST, Method::PUT]).allow_origin("http://localhost:4000".parse::<HeaderValue>().unwrap()).allow_credentials(true);
 
 
-    let db_client = DBClient::new(pool);
-;
+    let db_client = Arc::new(DBClient::new(pool));
+
     let app_state = AppState{
         
         
@@ -48,13 +49,16 @@ async fn main() {
         db_client,
     };
 
-    let app = Router::new().route("/create", post(create_capsule)).layer(Extension(Arc::new(app_state))).layer(cors);
+    let app = Router::new().route("/api", get(hello)).layer(Extension(Arc::new(app_state))).layer(cors);
 
     println!("Server is running at the port 4000 : {}", config.port);
 
     let addr = SocketAddr::from(([0,0,0,0],config.port));
-    let PgListener = tokio::net::TcpListener::bind(addr).await.unwrap();
-    axum::serve(PgListener,app).await.unwrap();
+    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    axum::serve(listener,app).await.unwrap();
 
 }
 
+async fn hello() -> &'static str {
+    "Hello, world!"
+}

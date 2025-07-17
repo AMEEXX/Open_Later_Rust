@@ -14,8 +14,8 @@ pub struct Capsule {
     pub message: String,
     pub unlock_at: DateTime<Utc>,
     pub created_at:DateTime<Utc>,
-    pub is_unlocked: Option<bool>,
-    pub email_sent: Option<bool>,
+    pub is_unlocked: bool,
+    pub email_sent: bool,
 }
 #[derive(Debug, Deserialize, Validate)]
 
@@ -58,8 +58,8 @@ impl From<Capsule> for CapsuleDto{
             email: c.email, 
             message: c.message, 
             unlock_at: c.unlock_at, 
-            is_unlocked: c.is_unlocked.unwrap(), 
-            email_sent: c.email_sent.unwrap() }
+            is_unlocked: c.is_unlocked, 
+            email_sent: c.email_sent }
 
     }
 

@@ -4,7 +4,7 @@ use crate::{
     dtos::{ CapsuleDto, CreateCapsuleRequest, CreateCapsulseResponse},
     error::Httperror,
 };
-use serde_json::json;
+
 use axum::{extract::Path, response::{Html, IntoResponse}, Extension, Json};
 use nanoid::nanoid;
 

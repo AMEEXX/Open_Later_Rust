@@ -68,7 +68,7 @@ async fn main() {
         .layer(Extension(Arc::new(app_state)))
         .layer(cors);
 
-    println!("Server is running at the port 4000 : {}", config.port);
+    println!("Server is running at the port: {}", config.port);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], config.port));
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();

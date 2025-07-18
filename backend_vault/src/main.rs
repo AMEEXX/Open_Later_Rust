@@ -12,6 +12,7 @@ use tracing_subscriber::filter::LevelFilter;
 mod dtos;
 mod error;
 mod db;
+mod handler;
 
 #[derive(Debug,Clone)]
 pub struct AppState{

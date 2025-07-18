@@ -33,7 +33,7 @@ pub struct CreateCapsuleRequest {
 
 #[derive(Debug, Serialize)]
 pub struct CreateCapsulseResponse {
-    pub pulic_id : String,
+    pub public_id : String,
     pub unlock_at : DateTime<Utc>,
 }
 #[derive(Debug, Serialize)]

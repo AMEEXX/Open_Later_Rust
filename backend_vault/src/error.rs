@@ -31,18 +31,18 @@ impl Httperror{
         }
     }
 
-    pub fn serer_error(message : impl Into<String>, _status : StatusCode) -> Self{
+    pub fn server_error(message : impl Into<String>) -> Self{
         Httperror { message: message.into(), status: StatusCode::INTERNAL_SERVER_ERROR }
     }
     
-    pub fn bad_request(message : impl Into<String>, _status : StatusCode) -> Self{
+    pub fn bad_request(message : impl Into<String>) -> Self{
         Httperror { message: message.into(), status: StatusCode::BAD_REQUEST }
     }
-    pub fn unique_constraint_violation(message : impl Into<String>, _status : StatusCode) -> Self{
+    pub fn unique_constraint_violation(message : impl Into<String>) -> Self{
         Httperror { message: message.into(), status: StatusCode::CONFLICT }
     }
     
-    pub fn unauthorized(message : impl Into<String>, _status : StatusCode) -> Self{
+    pub fn unauthorized(message : impl Into<String>) -> Self{
         Httperror { message: message.into(), status: StatusCode::UNAUTHORIZED }
     }
     pub fn into_http_response(self) -> Response{

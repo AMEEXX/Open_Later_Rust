@@ -51,6 +51,10 @@ pub struct CapsuleDto {
 
 impl From<Capsule> for CapsuleDto{
     fn from(c:Capsule) -> Self{
+        let unlocked = c
+            .unlock_at
+            .map(|t| t <= Utc::now())
+            .unwrap_or(false);
         CapsuleDto { 
             public_id: c.public_id, 
             name: c.name, 
@@ -58,7 +62,7 @@ impl From<Capsule> for CapsuleDto{
             email: c.email, 
             message: c.message, 
             unlock_at: c.unlock_at.expect("the unlock time needs to be set"), 
-            is_unlocked: c.is_unlocked.unwrap(), 
+            is_unlocked: unlocked,
             email_sent: c.email_sent.unwrap() }
 
     }

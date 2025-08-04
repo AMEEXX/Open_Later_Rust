@@ -7,7 +7,6 @@ use axum::{
         HeaderValue, Method,
         header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE},
     },
-    
 };
 
 use crate::{db::DBClient, routes::routes};
@@ -21,7 +20,6 @@ mod dtos;
 mod error;
 
 mod routes;
-
 
 #[derive(Debug, Clone)]
 pub struct AppState {
@@ -51,11 +49,15 @@ async fn main() {
         }
     };
 
-    let cors = CorsLayer::new()
-        .allow_headers([AUTHORIZATION, CONTENT_TYPE, ACCEPT])
-        .allow_methods([Method::GET, Method::POST, Method::PUT])
-        .allow_origin("http://localhost:4000".parse::<HeaderValue>().unwrap())
-        .allow_credentials(true);
+    use tower_http::cors::CorsLayer;
+use axum::http::{Method, HeaderValue, Request};
+
+let cors = CorsLayer::new()
+    .allow_origin("http://127.0.0.1:5173".parse::<HeaderValue>().unwrap())
+    .allow_methods([Method::GET, Method::POST, Method::PUT])
+    .allow_headers([AUTHORIZATION, ACCEPT, CONTENT_TYPE])
+    .allow_credentials(true);
+
 
     let db_client = Arc::new(DBClient::new(pool));
 
@@ -64,9 +66,7 @@ async fn main() {
         db_client,
     };
 
-    let app = routes()
-        .layer(Extension(Arc::new(app_state)))
-        .layer(cors);
+    let app = routes().layer(Extension(Arc::new(app_state))).layer(cors);
 
     println!("Server is running at the port: {}", config.port);
 
@@ -74,4 +74,3 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
-

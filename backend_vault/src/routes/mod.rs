@@ -9,7 +9,7 @@ pub fn routes() ->Router {
     Router::new()
     .route("/", get(hellovault))
     .route("/capsules", get(get_all_capsules))
-    .route("/create",post( create_capsule))
+    .route("/create",post(create_capsule))
     .route("/capsule/:public_id",get(get_capsule_by_public_id))
     
 

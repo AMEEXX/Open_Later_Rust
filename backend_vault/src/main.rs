@@ -53,12 +53,19 @@ async fn main() {
 use axum::http::{Method, HeaderValue, Request};
 
 let cors = CorsLayer::new()
-    .allow_origin("http://127.0.0.1:5173".parse::<HeaderValue>().unwrap())
+    .allow_origin([
+        
+        HeaderValue::from_static("https://open-later-rust-el5yjg4se-ameexxs-projects.vercel.app"),
+        
+        HeaderValue::from_static("http://127.0.0.1:5173"),
+    ])
     .allow_methods([Method::GET, Method::POST, Method::PUT])
-    .allow_headers([AUTHORIZATION, ACCEPT, CONTENT_TYPE])
+    .allow_headers([
+        http::header::AUTHORIZATION,
+        http::header::ACCEPT,
+        http::header::CONTENT_TYPE,
+    ])
     .allow_credentials(true);
-
-
     let db_client = Arc::new(DBClient::new(pool));
 
     let app_state = AppState {

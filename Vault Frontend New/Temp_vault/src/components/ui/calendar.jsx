@@ -1,199 +1,66 @@
-import React, { useState, useRef } from "react"
-import { useNavigate } from "react-router-dom"
-import { CalendarIcon, Send, Clock } from "lucide-react"
-import { format } from "date-fns"
-
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Calendar } from "@/components/ui/calendar"
+import React from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { DayPicker } from "react-day-picker"
 import { cn } from "@/lib/utils"
-import { Card, CardContent } from "@/components/ui/card"
-import { createCapsule } from "@/lib/api"
+import { buttonVariants } from "@/components/ui/button"
 
-export function CreateCapsuleForm() {
-  const navigate = useNavigate()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [date, setDate] = useState(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
-  const [showCalendar, setShowCalendar] = useState(false)
-  const calendarRef = useRef(null)
-
-  async function handleSubmit(event) {
-    event.preventDefault()
-    setIsSubmitting(true)
-
-    const formData = new FormData(event.currentTarget)
-    const name = formData.get("name")
-    const email = formData.get("email")
-    const title = formData.get("title")
-    const message = formData.get("message")
-
-    if (!date) {
-      alert("Please select an unlock date")
-      setIsSubmitting(false)
-      return
-    }
-
-    try {
-      const result = await createCapsule({
-        name,
-        email,
-        title,
-        message,
-        unlock_at: date.toISOString(),
-      })
-
-      alert("Time Capsule Created Successfully!")
-      navigate(`/capsule/${result.public_id}`)
-    } catch (error) {
-      console.error("Error creating capsule:", error)
-      alert("Failed to create time capsule. Please try again.")
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const handleDateSelect = (selectedDate) => {
-    if (selectedDate) {
-      setDate(selectedDate)
-      setShowCalendar(false)
-    }
-  }
-
-  const toggleCalendar = () => {
-    setShowCalendar(!showCalendar)
-  }
-
-  // Close calendar when clicking outside
-  React.useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (calendarRef.current && !calendarRef.current.contains(event.target)) {
-        setShowCalendar(false)
-      }
-    }
-
-    if (showCalendar) {
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [showCalendar])
-
+function Calendar({
+  className,
+  classNames,
+  showOutsideDays = true,
+  ...props
+}) {
   return (
-    <Card className="border-0 shadow-lg bg-black/20 dark:bg-white/5 backdrop-blur-md rounded-xl overflow-hidden text-white">
-      <div className="h-2 bg-gradient-to-r from-[#2e4f80] via-[#5e9be3] to-[#c8e5fc]"></div>
-      <CardContent className="pt-8 p-8">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="name" className="text-base text-white">
-              Your Name
-            </Label>
-            <Input
-              id="name"
-              name="name"
-              required
-              className="h-12 bg-transparent border-2 border-gray-600 text-white placeholder-gray-400 focus-visible:ring-2 focus-visible:ring-cyan-500 transition-all duration-300"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-base text-white">
-              Email
-            </Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              required
-              className="h-12 bg-transparent border-2 border-gray-600 text-white placeholder-gray-400 focus-visible:ring-2 focus-visible:ring-cyan-500 transition-all duration-300"
-            />
-            <p className="text-xs text-gray-400">
-              Your email will not be displayed publicly. It's only used for reference.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="title" className="text-base text-white">
-              Capsule Title
-            </Label>
-            <Input
-              id="title"
-              name="title"
-              required
-              className="h-12 bg-transparent border-2 border-gray-600 text-white placeholder-gray-400 focus-visible:ring-2 focus-visible:ring-cyan-500 transition-all duration-300"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="message" className="text-base text-white">
-              Your Message
-            </Label>
-            <Textarea
-              id="message"
-              name="message"
-              rows={6}
-              placeholder="Write your message for the future..."
-              required
-              className="bg-transparent border-2 border-gray-600 text-white placeholder-gray-400 focus-visible:ring-2 focus-visible:ring-cyan-500 transition-all duration-300"
-            />
-          </div>
-
-          <div className="space-y-2 relative" ref={calendarRef}>
-            <Label className="text-base text-white">Unlock Date</Label>
-            
-            <button
-              type="button"
-              onClick={toggleCalendar}
-              className={cn(
-                "w-full h-12 flex items-center justify-start text-left font-normal bg-transparent border-2 border-gray-600 text-white hover:bg-white/10 transition-all duration-300 px-3 rounded-md",
-                !date && "text-gray-400",
-              )}
-            >
-              <CalendarIcon className="mr-2 h-5 w-5" />
-              {date ? format(date, "PPP") : <span>Pick a date</span>}
-            </button>
-
-            {showCalendar && (
-              <div className="absolute top-full left-0 mt-2 z-50 bg-slate-900 border border-slate-600 rounded-lg shadow-2xl">
-                <div className="p-3">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={handleDateSelect}
-                    disabled={(date) => date < new Date()}
-                    initialFocus
-                    className="rounded-md"
-                  />
-                </div>
-              </div>
-            )}
-            
-            <p className="text-xs text-gray-400">
-              Select when your time capsule should be unlocked and visible to everyone.
-            </p>
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full h-12 text-white font-semibold transition-all duration-300 mt-4 gap-2 transform hover:scale-105 active:scale-95 focus:outline-none 
-            bg-gradient-to-r from-[#2e4f80] via-[#5e9be3] to-[#8bc1f5] 
-            hover:opacity-95"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <>
-                <Clock className="h-5 w-5 animate-spin" />
-                Creating...
-              </>
-            ) : (
-              <>
-                <Send className="h-5 w-5" />
-                Create Time Capsule
-              </>
-            )}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+    <DayPicker
+      showOutsideDays={showOutsideDays}
+      className={cn("p-3 bg-slate-900 text-white", className)}
+      classNames={{
+        months: "flex flex-col sm:flex-row gap-2",
+        month: "flex flex-col gap-4",
+        caption: "flex justify-center pt-1 relative items-center w-full",
+        caption_label: "text-sm font-medium text-white",
+        nav: "flex items-center gap-1",
+        nav_button: cn(
+          buttonVariants({ variant: "outline" }),
+          "size-7 bg-slate-800 border-slate-600 text-white hover:bg-slate-700 hover:text-white p-0 opacity-80 hover:opacity-100"
+        ),
+        nav_button_previous: "absolute left-1",
+        nav_button_next: "absolute right-1",
+        table: "w-full border-collapse space-x-1",
+        head_row: "flex",
+        head_cell: "text-slate-400 rounded-md w-8 font-normal text-[0.8rem]",
+        row: "flex w-full mt-2",
+        cell: cn(
+          "relative p-0 text-center text-sm text-white focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-blue-600/20 [&:has([aria-selected].day-range-end)]:rounded-r-md",
+          props.mode === "range"
+            ? "[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md"
+            : "[&:has([aria-selected])]:rounded-md"
+        ),
+        day: cn(
+          buttonVariants({ variant: "ghost" }),
+          "size-8 p-0 font-normal text-white hover:bg-slate-700 hover:text-white aria-selected:opacity-100"
+        ),
+        day_range_start: "day-range-start aria-selected:bg-blue-600 aria-selected:text-white",
+        day_range_end: "day-range-end aria-selected:bg-blue-600 aria-selected:text-white",
+        day_selected: "bg-blue-600 text-white hover:bg-blue-700 hover:text-white focus:bg-blue-600 focus:text-white",
+        day_today: "bg-slate-700 text-white",
+        day_outside: "day-outside text-slate-500 aria-selected:text-slate-500",
+        day_disabled: "text-slate-600 opacity-50",
+        day_range_middle: "aria-selected:bg-blue-600/20 aria-selected:text-white",
+        day_hidden: "invisible",
+        ...classNames,
+      }}
+      components={{
+        IconLeft: ({ className, ...props }) => (
+          <ChevronLeft className={cn("size-4 text-white", className)} {...props} />
+        ),
+        IconRight: ({ className, ...props }) => (
+          <ChevronRight className={cn("size-4 text-white", className)} {...props} />
+        ),
+      }}
+      {...props}
+    />
   )
 }
+
+export { Calendar }

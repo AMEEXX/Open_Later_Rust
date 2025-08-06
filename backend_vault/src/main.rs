@@ -1,24 +1,16 @@
 mod config;
 use std::{net::SocketAddr, sync::Arc};
 
-use axum::{
-    Extension,
-    http::{
-        HeaderValue, Method,
-        header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE},
-    },
-};
+use axum::Extension;
 
 use crate::{db::DBClient, routes::routes};
 use config::Config;
 use dotenv::dotenv;
 use sqlx::postgres::PgPoolOptions;
-use tower_http::cors::CorsLayer;
 use tracing_subscriber::filter::LevelFilter;
 mod db;
 mod dtos;
 mod error;
-
 mod routes;
 
 #[derive(Debug, Clone)]
@@ -50,22 +42,20 @@ async fn main() {
     };
 
     use tower_http::cors::CorsLayer;
-use axum::http::{Method, HeaderValue, Request};
+    use axum::http::{Method, HeaderValue};
 
-let cors = CorsLayer::new()
-    .allow_origin([
-        
-        HeaderValue::from_static("https://open-later-rust-el5yjg4se-ameexxs-projects.vercel.app"),
-        
-        HeaderValue::from_static("http://127.0.0.1:5173"),
-    ])
-    .allow_methods([Method::GET, Method::POST, Method::PUT])
-    .allow_headers([
-        http::header::AUTHORIZATION,
-        http::header::ACCEPT,
-        http::header::CONTENT_TYPE,
-    ])
-    .allow_credentials(true);
+    let cors = CorsLayer::new()
+        .allow_origin([
+            HeaderValue::from_static("https://open-later-rust-el5yjg4se-ameexxs-projects.vercel.app"),
+            HeaderValue::from_static("http://127.0.0.1:5173"),
+        ])
+        .allow_methods([Method::GET, Method::POST, Method::PUT])
+        .allow_headers([
+            http::header::AUTHORIZATION,
+            http::header::ACCEPT,
+            http::header::CONTENT_TYPE,
+        ])
+        .allow_credentials(true);
     let db_client = Arc::new(DBClient::new(pool));
 
     let app_state = AppState {

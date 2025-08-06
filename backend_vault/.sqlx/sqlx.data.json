@@ -1,0 +1,230 @@
+{
+  "db": "PostgreSQL",
+  "queries": [
+    {
+      "describe": {
+        "columns": [
+          {
+            "name": "id",
+            "ordinal": 0,
+            "type_info": "Uuid"
+          },
+          {
+            "name": "public_id",
+            "ordinal": 1,
+            "type_info": "Text"
+          },
+          {
+            "name": "name",
+            "ordinal": 2,
+            "type_info": "Text"
+          },
+          {
+            "name": "email",
+            "ordinal": 3,
+            "type_info": "Text"
+          },
+          {
+            "name": "title",
+            "ordinal": 4,
+            "type_info": "Text"
+          },
+          {
+            "name": "message",
+            "ordinal": 5,
+            "type_info": "Text"
+          },
+          {
+            "name": "unlock_at",
+            "ordinal": 6,
+            "type_info": "Timestamptz"
+          },
+          {
+            "name": "created_at",
+            "ordinal": 7,
+            "type_info": "Timestamptz"
+          },
+          {
+            "name": "is_unlocked",
+            "ordinal": 8,
+            "type_info": "Bool"
+          },
+          {
+            "name": "email_sent",
+            "ordinal": 9,
+            "type_info": "Bool"
+          }
+        ],
+        "nullable": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          true,
+          true
+        ],
+        "parameters": {
+          "Left": [
+            "Text",
+            "Text",
+            "Text",
+            "Text",
+            "Text",
+            "Timestamptz"
+          ]
+        }
+      },
+      "query": "\n    INSERT INTO capsules \n        (public_id, name, email, title, message, unlock_at) \n    VALUES\n        ($1, $2, $3, $4, $5, $6)\n    RETURNING \n        id, public_id, name, email, title, message,\n        unlock_at, created_at, is_unlocked, email_sent\n    "
+    },
+    {
+      "describe": {
+        "columns": [
+          {
+            "name": "id",
+            "ordinal": 0,
+            "type_info": "Uuid"
+          },
+          {
+            "name": "public_id",
+            "ordinal": 1,
+            "type_info": "Text"
+          },
+          {
+            "name": "name",
+            "ordinal": 2,
+            "type_info": "Text"
+          },
+          {
+            "name": "email",
+            "ordinal": 3,
+            "type_info": "Text"
+          },
+          {
+            "name": "title",
+            "ordinal": 4,
+            "type_info": "Text"
+          },
+          {
+            "name": "message",
+            "ordinal": 5,
+            "type_info": "Text"
+          },
+          {
+            "name": "unlock_at",
+            "ordinal": 6,
+            "type_info": "Timestamptz"
+          },
+          {
+            "name": "created_at",
+            "ordinal": 7,
+            "type_info": "Timestamptz"
+          },
+          {
+            "name": "is_unlocked",
+            "ordinal": 8,
+            "type_info": "Bool"
+          },
+          {
+            "name": "email_sent",
+            "ordinal": 9,
+            "type_info": "Bool"
+          }
+        ],
+        "nullable": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          true,
+          true
+        ],
+        "parameters": {
+          "Left": []
+        }
+      },
+      "query": "\n            SELECT * FROM capsules\n            ORDER BY created_at DESC\n            "
+    },
+    {
+      "describe": {
+        "columns": [
+          {
+            "name": "id",
+            "ordinal": 0,
+            "type_info": "Uuid"
+          },
+          {
+            "name": "public_id",
+            "ordinal": 1,
+            "type_info": "Text"
+          },
+          {
+            "name": "name",
+            "ordinal": 2,
+            "type_info": "Text"
+          },
+          {
+            "name": "email",
+            "ordinal": 3,
+            "type_info": "Text"
+          },
+          {
+            "name": "title",
+            "ordinal": 4,
+            "type_info": "Text"
+          },
+          {
+            "name": "message",
+            "ordinal": 5,
+            "type_info": "Text"
+          },
+          {
+            "name": "unlock_at",
+            "ordinal": 6,
+            "type_info": "Timestamptz"
+          },
+          {
+            "name": "created_at",
+            "ordinal": 7,
+            "type_info": "Timestamptz"
+          },
+          {
+            "name": "is_unlocked",
+            "ordinal": 8,
+            "type_info": "Bool"
+          },
+          {
+            "name": "email_sent",
+            "ordinal": 9,
+            "type_info": "Bool"
+          }
+        ],
+        "nullable": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          true,
+          true
+        ],
+        "parameters": {
+          "Left": [
+            "Text"
+          ]
+        }
+      },
+      "query": "\n            SELECT *\n            FROM capsules\n            WHERE public_id = $1\n            "
+    }
+  ]
+}

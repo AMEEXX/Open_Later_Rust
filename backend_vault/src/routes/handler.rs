@@ -1,7 +1,7 @@
 use crate::{
     AppState,
     db::TableExt,
-    dtos::{ CapsuleDto, CreateCapsuleRequest, CreateCapsulseResponse},
+    dtos::{ CapsuleDto, CreateCapsuleRequest, CreateCapsuleResponse},
     error::Httperror,
 };
 
@@ -36,7 +36,7 @@ pub async fn create_capsule(
         .validate()
         .map_err(|err| Httperror::bad_request(err.to_string()))?;
 
-    let public_is = nanoid!(10);
+    let public_id: String = nanoid!(10);
 
     let capsule = app_state
         .db_client
@@ -46,12 +46,12 @@ pub async fn create_capsule(
             &payload.title,
             &payload.message,
             payload.unlock_at,
-            &public_is,
+            &public_id,
         )
         .await
         .map_err(|err| Httperror::server_error(err.to_string()))?;
 
-    let response = CreateCapsulseResponse {
+    let response = CreateCapsuleResponse {
         public_id: capsule.public_id,
         unlock_at: capsule.unlock_at.unwrap(),
     };

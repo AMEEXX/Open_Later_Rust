@@ -230,10 +230,15 @@ export default function Home() {
                     to={`/capsule/${capsule.public_id}`}
                     className="flex-1 block group"
                   >
-                    <div 
-                      className="relative bg-white/5 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-white/10 hover:border-white/20 group-hover:-translate-y-2 transition-all duration-500 hover:shadow-2xl transform translate-y-10 opacity-0 animate-[slideUp_0.5s_ease-out_forwards]"
-                      style={{ animationDelay: `${index * 0.15}s` }}
-                    >
+                    // In your capsule card div, add these styles temporarily:
+<div className="relative bg-white/5 backdrop-blur-lg rounded-2xl p-8 
+  border border-white/10 hover:border-white/20 
+  group-hover:-translate-y-2 transition-all duration-500 
+  hover:shadow-2xl 
+  opacity-100 /* Force visibility */
+  bg-red-500/20 /* Temporary debug color */
+  z-50 /* Force stacking context */
+">
                       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       
                       <div className="relative z-10">

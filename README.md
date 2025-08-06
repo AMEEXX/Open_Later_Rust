@@ -1,14 +1,14 @@
 # OpenLater - Time Capsule Application
 
 ##  Project Concept
-**OpenLater** is a digital time capsule application that allows users to create messages for their future selves. Users write personal notes, set a future unlock date, and the message remains sealed until that date arrives.
+**OpenLater** is a future vault application that allows users to create messages for their future selves. Users write personal notes, set a future unlock date, and the message remains sealed until that date arrives.
 
 ##  System Architecture
 
 ```
 ┌─────────────────┐    HTTP/JSON     ┌──────────────────┐    SQL Queries    ┌─────────────────┐
 │                 │    Requests      │                  │                   │                 │
-│   Frontend      │ ◄─────────────► │   Rust Backend   │ ◄──────────────► │   PostgreSQL    │
+│   Frontend      │ ◄─────────────►  │   Rust Backend   │ ◄──────────────► │   PostgreSQL    │
 │   (React/Vue)   │                  │   (Axum Server)  │                   │   Database      │
 │                 │                  │                  │                   │                 │
 └─────────────────┘                  └──────────────────┘                   └─────────────────┘
@@ -48,7 +48,7 @@
        ▼
 ┌─────────────┐    ┌──────────────────┐
 │  Backend    │    │   Database       │
-│  Validates  │───▶│   Stores         │
+│  Validates  │──> │   Stores         │
 │    Data     │    │   Capsule        │
 └──────┬──────┘    └──────────────────┘
        │
@@ -94,7 +94,7 @@
 ```
 CREATE CAPSULE FLOW:
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   User      │────▶│   Axum      │────▶│ PostgreSQL  │────▶│  Response   │
+│   User      │────>│   Axum      │────>│ PostgreSQL  │────>│  Response   │
 │   Input     │     │ Validates   │     │   Stores    │     │ Public ID   │
 │             │     │ & Generates │     │  Capsule    │     │ + Unlock    │
 │             │     │ Public ID   │     │             │     │   Date      │
@@ -102,7 +102,7 @@ CREATE CAPSULE FLOW:
 
 RETRIEVE CAPSULE FLOW:
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Public    │────▶│    Query    │────▶│   Check     │────▶│   Return    │
+│   Public    │────>│    Query    │────>│   Check     │───>│   Return    │
 │     ID      │     │  Database   │     │  Unlock     │     │  Message    │
 │  Request    │     │ by Public   │     │   Date      │     │ (if ready)  │
 │             │     │     ID      │     │             │     │             │
@@ -127,9 +127,8 @@ RETRIEVE CAPSULE FLOW:
 
 1. **Time-Locked Messages**: Content only accessible after unlock date
 2. **Public Sharing**: Shareable links via public ID
-3. **Multiple Formats**: Support for different message types
-4. **Timeline View**: See all capsules with unlock status
-5. **Responsive Design**: Works on mobile and desktop
+3 **Timeline View**: See all capsules with unlock status
+4. **Responsive Design**: Works on mobile and desktop
 
 ## Potential Improvements
 
@@ -143,9 +142,8 @@ RETRIEVE CAPSULE FLOW:
 ## Business Value
 
 - **Personal Growth**: Reflection and goal tracking
-- **Memory Preservation**: Digital time capsules for families
+- **Memory Preservation**: Future messages for families
 - **Event Planning**: Messages for special occasions
-- **Corporate Use**: Team goals and milestone messages
 - **Educational**: Student projects and future career notes
 
 ---

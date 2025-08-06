@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getAllCapsules } from "@/lib/api";
+import { Lock, Unlock, Calendar, Clock } from "lucide-react";
 
 export default function Home() {
   const [capsules, setCapsules] = useState([]);
@@ -230,19 +231,81 @@ export default function Home() {
                     to={`/capsule/${capsule.public_id}`}
                     className="flex-1 block group"
                   >
-                    // In your capsule card div, add these styles temporarily:
-<div className="relative bg-white/5 backdrop-blur-lg rounded-2xl p-8 
-  border border-white/10 hover:border-white/20 
-  group-hover:-translate-y-2 transition-all duration-500 
-  hover:shadow-2xl 
-  opacity-100 /* Force visibility */
-  bg-red-500/20 /* Temporary debug color */
-  z-50 /* Force stacking context */
-">
+                    <div 
+                      className="relative bg-white/5 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-white/10 hover:border-white/20 group-hover:-translate-y-2 transition-all duration-500 hover:shadow-2xl transform translate-y-10 opacity-0 animate-[slideUp_0.5s_ease-out_forwards]"
+                      style={{ animationDelay: `${index * 0.15}s` }}
+                    >
                       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       
                       <div className="relative z-10">
-                        {/* ... rest of your capsule card content ... */}
+                        {/* Header with title and status */}
+                        <div className="flex items-start justify-between mb-4">
+                          <h3 className="text-xl font-semibold text-blue-200 leading-tight flex-1 pr-2">
+                            {capsule.title}
+                          </h3>
+                          <div className="flex-shrink-0">
+                            {isUnlocked ? (
+                              <Unlock className="h-5 w-5 text-green-400" />
+                            ) : (
+                              <Lock className="h-5 w-5 text-amber-400" />
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Author */}
+                        <p className="text-gray-400 text-sm mb-4">By {capsule.name}</p>
+
+                        {/* Message preview */}
+                        <div className="text-sm text-gray-300 mb-6 leading-relaxed min-h-[3rem]">
+                          {isUnlocked && !capsule.message.startsWith('🔒') ? (
+                            <p className="line-clamp-3">
+                              {capsule.message.length > 120 
+                                ? `${capsule.message.substring(0, 120)}...` 
+                                : capsule.message
+                              }
+                            </p>
+                          ) : (
+                            <div className="flex items-center text-amber-400">
+                              <Lock className="h-4 w-4 mr-2 flex-shrink-0" />
+                              <span className="text-sm italic">
+                                Message will be revealed on {new Date(capsule.unlock_at).toLocaleDateString()}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Footer with dates and status */}
+                        <div className="space-y-3 pt-4 border-t border-white/10">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center text-xs text-gray-500">
+                              <Calendar className="h-3 w-3 mr-1" />
+                              Created: {capsule.created_at 
+                                ? new Date(capsule.created_at).toLocaleDateString()
+                                : 'Unknown'
+                              }
+                            </div>
+                            
+                            <span
+                              className={`text-xs font-medium px-2 py-1 rounded-full border ${
+                                isUnlocked
+                                  ? "text-green-400 bg-green-900/20 border-green-700/30"
+                                  : "text-amber-400 bg-amber-900/20 border-amber-700/30"
+                              }`}
+                            >
+                              {isUnlocked ? "Unlocked" : "Locked"}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center text-xs text-gray-500">
+                            <Clock className="h-3 w-3 mr-1 flex-shrink-0" />
+                            <span>
+                              {isUnlocked 
+                                ? `Unlocked: ${new Date(capsule.unlock_at).toLocaleDateString()}`
+                                : `Unlocks: ${new Date(capsule.unlock_at).toLocaleDateString()}`
+                              }
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </Link>
@@ -271,6 +334,15 @@ export default function Home() {
 
       {/* Bottom fade effect */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-800 to-transparent pointer-events-none"></div>
+
+      <style jsx>{`
+        @keyframes slideUp {
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
   );
 }

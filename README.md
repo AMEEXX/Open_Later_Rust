@@ -1,4 +1,4 @@
-# OpenLater - Time Capsule Application
+# OpenLater - Future Vault Application
 
 ##  Project Concept
 **OpenLater** is a future vault application that allows users to create messages for their future selves. Users write personal notes, set a future unlock date, and the message remains sealed until that date arrives.

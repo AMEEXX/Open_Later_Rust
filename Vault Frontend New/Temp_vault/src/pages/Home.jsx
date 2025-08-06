@@ -5,6 +5,8 @@ import { getAllCapsules } from "@/lib/api";
 export default function Home() {
   const [capsules, setCapsules] = useState([]);
   const [loading, setLoading] = useState(true);
+ const [displayedText, setDisplayedText] = useState('');
+const fullText = 'Future Vault';
 
   useEffect(() => {
     const fetchCapsules = async () => {
@@ -21,6 +23,37 @@ export default function Home() {
 
     fetchCapsules();
   }, []);
+  
+
+useEffect(() => {
+  let index = 0;
+  const interval = setInterval(() => {
+    if (index <= fullText.length) {
+      setDisplayedText(fullText.slice(0, index));
+      index++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 150); // typing speed
+
+  return () => clearInterval(interval);
+}, []);
+
+useEffect(() => {
+  let index = 0;
+  const interval = setInterval(() => {
+    if (index <= fullText.length) {
+      setDisplayedText(fullText.slice(0, index));
+      index++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 150); // Adjust typing speed (150ms per character)
+
+  return () => clearInterval(interval);
+}, []);
+
+
 
   const now = new Date();
   const lockedCapsules = capsules.filter(
@@ -65,13 +98,13 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="relative container mx-auto px-4 py-16 z-10">
+      <div className="relative container mx-auto px-4 py-20 z-10">
         {/* Hero Section */}
         <div className="text-center mb-16 relative">
           {/* Floating icon with enhanced glow effect */}
-          <div className="inline-block p-6 rounded-2xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl mb-8 relative group">
+          <div className="inline-block p-6 rounded-2xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl mb-20 relative group">
             {/* Multi-layered glow effect */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/30 via-blue-500/30 to-purple-500/30 rounded-2xl blur-lg opacity-40 group-hover:opacity-70 transition-opacity duration-500"></div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/30 via-blue-500/30 to-purple-500/30 rounded-2xl blur-lg opacity-40mb - group-hover:opacity-70 transition-opacity duration-500"></div>
             <div className="absolute -inset-2 bg-gradient-to-r from-purple-400/20 via-blue-400/20 to-cyan-400/20 rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl blur-xl"></div>
             <svg
@@ -83,10 +116,10 @@ export default function Home() {
             </svg>
           </div>
 
-          <h1
-            className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-8 bg-clip-text text-transparent leading-tight"
-            style={{
-              backgroundImage: `
+          <h1 
+  className="text-8xl sm:text-7xl lg:text-8xl font-bold mb-20 font-sans bg-clip-text text-transparent leading-tight relative min-h-[6rem]"
+  style={{
+    backgroundImage: `
       linear-gradient(
         to top,
         #2e4f80 0%,
@@ -96,12 +129,17 @@ export default function Home() {
         #eff7f6 65%,
         #ffffff 90%
       )
-
     `,
-            }}
-          >
-            Future Vault
-          </h1>
+  }}
+>
+  <span className="inline-block">
+    {displayedText}
+  </span>
+  {displayedText.length < fullText.length && (
+    <span className="absolute bottom-2 w-[6px] h-24 bg-white ml-1"></span>
+  )}
+</h1>
+
 
           <p className="text-xl sm:text-2xl text-gray-300 max-w-3xl mx-auto mb-12 leading-relaxed">
             Lock your thoughts, memories, and wishes in a digital time capsule

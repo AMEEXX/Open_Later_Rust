@@ -87,7 +87,7 @@
 ### Deployment
 - **Backend**: Render (cloud platform)
 - **Database**: PostgreSQL on Render
-- **Frontend**: Vercel (assumed)
+- **Frontend**: React , Vite
 
 ##  Data Flow
 

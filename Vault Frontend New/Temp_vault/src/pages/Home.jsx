@@ -101,7 +101,7 @@ export default function Home() {
           </div>
 
           <h1 
-            className="text-8xl sm:text-7xl lg:text-8xl font-bold mb-20 font-sans bg-clip-text text-transparent leading-tight relative min-h-[6rem]"
+            className="text-8xl sm:text-7xl lg:text-8xl font-bold mb-12 font-sans bg-clip-text text-transparent leading-tight relative min-h-[6rem]"
             style={{
               backgroundImage: `
                 linear-gradient(

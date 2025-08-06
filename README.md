@@ -8,19 +8,19 @@
 ```
 ┌─────────────────┐    HTTP/JSON     ┌──────────────────┐    SQL Queries    ┌─────────────────┐
 │                 │    Requests      │                  │                   │                 │
-│   Frontend      │ ◄─────────────►  │   Rust Backend   │ ◄──────────────► │   PostgreSQL    │
+│   Frontend      │ ◄─────────────►  │   Rust Backend   │ ◄──────────────►  │   PostgreSQL    │
 │   (React/Vue)   │                  │   (Axum Server)  │                   │   Database      │
 │                 │                  │                  │                   │                 │
 └─────────────────┘                  └──────────────────┘                   └─────────────────┘
         │                                     │                                      │
         │                                     │                                      │
         ▼                                     ▼                                      ▼
-┌─────────────────┐                  ┌──────────────────┐                   ┌─────────────────┐
-│ User Interface  │                  │ API Endpoints    │                   │ Capsules Table  │
-│ - Create Form   │                  │ - POST /create   │                   │ - id (UUID)     │
-│ - View Capsules │                  │ - GET /capsules  │                   │ - public_id     │
-│ - Unlock Status │                  │ - GET /capsule/  │                   │ - name          │
-└─────────────────┘                  └──────────────────┘                   │ - email         │
+┌─────────────────┐                  ┌──────────────────┐                    ┌─────────────────┐
+│ User Interface  │                  │ API Endpoints    │                    │ Capsules Table  │
+│ - Create Form   │                  │ - POST /create   │                    │ - id (UUID)     │
+│ - View Capsules │                  │ - GET /capsules  │                    │ - public_id     │
+│ - Unlock Status │                  │ - GET /capsule/  │                    │ - name          │
+└─────────────────┘                  └──────────────────┘                    │ - email         │
                                                                              │ - title         │
                                                                              │ - message       │
                                                                              │ - unlock_at     │
@@ -102,7 +102,7 @@ CREATE CAPSULE FLOW:
 
 RETRIEVE CAPSULE FLOW:
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Public    │────>│    Query    │────>│   Check     │───>│   Return    │
+│   Public    │────>│    Query    │────>│   Check     │───> │   Return    │
 │     ID      │     │  Database   │     │  Unlock     │     │  Message    │
 │  Request    │     │ by Public   │     │   Date      │     │ (if ready)  │
 │             │     │     ID      │     │             │     │             │

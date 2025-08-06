@@ -10,9 +10,10 @@ export default function Home() {
     const fetchCapsules = async () => {
       try {
         const data = await getAllCapsules()
+        console.log("📋 Fetched capsules:", data.length, "items")
         setCapsules(data)
       } catch (error) {
-        console.error("Error fetching capsules:", error)
+        console.error("❌ Error fetching capsules:", error)
       } finally {
         setLoading(false)
       }
@@ -24,6 +25,8 @@ export default function Home() {
   const now = new Date()
   const lockedCapsules = capsules.filter(capsule => new Date(capsule.unlock_at) > now)
   const unlockedCapsules = capsules.filter(capsule => new Date(capsule.unlock_at) <= now)
+
+  console.log(`🔒 ${lockedCapsules.length} locked, 🔓 ${unlockedCapsules.length} unlocked capsules`)
 
   if (loading) {
     return (
@@ -163,8 +166,9 @@ export default function Home() {
 
             <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
               {capsules.slice(0, 3).map((capsule, index) => {
-                // Double-check unlock status on frontend
-                const isUnlocked = new Date(capsule.unlock_at) <= new Date()
+                // Frontend double-check of unlock status
+                const isUnlocked = new Date(capsule.unlock_at) <= new Date() || capsule.is_unlocked
+                console.log(`Capsule ${capsule.public_id}: isUnlocked=${isUnlocked}, message="${capsule.message.substring(0, 50)}..."`)
                 
                 return (
                   <Link key={capsule.public_id} to={`/capsule/${capsule.public_id}`} className="flex-1 block group">
@@ -194,18 +198,21 @@ export default function Home() {
                           {isUnlocked ? 'Unlocked' : 'Unlocks'}: {new Date(capsule.unlock_at).toLocaleDateString()}
                         </p>
                         
-                        {/* Show message preview only for unlocked capsules */}
+                        {/* Message preview - backend already handles security, but frontend double-checks */}
                         <p className="text-gray-300 text-sm leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
-                          {isUnlocked ? (
-                            // Show preview of actual message for unlocked capsules
-                            capsule.message.substring(0, 100) + (capsule.message.length > 100 ? "..." : "")
+                          {isUnlocked && !capsule.message.startsWith('🔒') ? (
+                            // Show preview of actual message for confirmed unlocked capsules
+                            <>
+                              {capsule.message.substring(0, 100)}
+                              {capsule.message.length > 100 ? "..." : ""}
+                            </>
                           ) : (
-                            // Show locked message indicator for locked capsules
+                            // Show locked message indicator 
                             <span className="flex items-center text-amber-400">
-                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                               </svg>
-                              Message locked until {new Date(capsule.unlock_at).toLocaleDateString()}
+                              <span className="text-xs">Message locked until {new Date(capsule.unlock_at).toLocaleDateString()}</span>
                             </span>
                           )}
                         </p>
@@ -225,7 +232,7 @@ export default function Home() {
               <div className="flex items-center space-x-3">
                 <div className="w-4 h-4 bg-amber-400/70 rounded-full animate-pulse"></div>
                 <span className="text-gray-300 text-lg">
-                  {lockedCapsules.length} more vaults{lockedCapsules.length !== 1 ? "s are" : " is"} waiting to be unlocked...
+                  {lockedCapsules.length} more capsule{lockedCapsules.length !== 1 ? "s are" : " is"} waiting to be unlocked...
                 </span>
               </div>
             </div>
@@ -233,7 +240,7 @@ export default function Home() {
         )}
       </div>
 
-
+      {/* Bottom fade effect */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-800 to-transparent pointer-events-none"></div>
     </div>
   )

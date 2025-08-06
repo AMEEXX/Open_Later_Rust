@@ -16,29 +16,12 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
-    historyApiFallback: {
-
-      rewrites: [
-        {
-          from: /^\/[^.]*$/,  
-          to: '/index.html'
-        }
-      ],
-
-      disableDotRule: false,
-    }
+    // Simple approach - this should work
+    historyApiFallback: true
   },
   preview: {
     port: 4173,
     host: true,
-    historyApiFallback: {
-      rewrites: [
-        {
-          from: /^\/[^.]*$/,  
-          to: '/index.html'
-        }
-      ],
-      disableDotRule: false,
-    }
+    historyApiFallback: true
   }
 })

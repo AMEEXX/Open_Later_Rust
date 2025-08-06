@@ -28,7 +28,12 @@
                                                                              │ - is_unlocked   │
                                                                              └─────────────────┘
 ```
+![Client Layer](./assets/client.png)
+![APi Layer](./assets/api.png)
+![Data Layer](./assests/data.png)
+![Logic](./data/logic.png)
 
+ 
 ##  User Flow
 
 ```

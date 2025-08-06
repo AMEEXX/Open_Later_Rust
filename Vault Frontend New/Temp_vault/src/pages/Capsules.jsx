@@ -12,10 +12,10 @@ export default function Capsules() {
     const fetchCapsules = async () => {
       try {
         const data = await getAllCapsules();
-        console.log("📋 Fetched capsules for capsules page:", data.length, "items");
+        console.log("Fetched capsules for capsules page:", data.length, "items");
         setCapsules(data);
       } catch (error) {
-        console.error("❌ Error fetching capsules:", error);
+        console.error("Error fetching capsules:", error);
       } finally {
         setLoading(false);
       }
@@ -34,7 +34,7 @@ export default function Capsules() {
 
   return (
     <div className="min-h-screen px-4 py-16 bg-gradient-to-br from-black via-[#0b0e14] to-[#111827] text-white">
-      {/* Home Button */}
+
       <div className="absolute top-6 left-6">
         <Link
           to="/"
@@ -72,7 +72,7 @@ export default function Capsules() {
           )`,
         }}
       >
-        Time Capsules
+       Vaults
       </h1>
 
       {capsules.length === 0 ? (
@@ -83,15 +83,14 @@ export default function Capsules() {
               <Clock className="h-10 w-10 text-white" />
             </div>
           </div>
-          <h2 className="text-2xl font-medium mb-3">No Capsules Available</h2>
+          <h2 className="text-2xl font-medium mb-3">No Vaults Available</h2>
           <p className="text-gray-400">
-            There are no time capsules available at the moment.
+            There are no vaults available at the moment.
           </p>
         </div>
       ) : (
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {capsules.map((capsule) => {
-            // Frontend double-check of unlock status
             const isUnlocked = new Date(capsule.unlock_at) <= new Date() || capsule.is_unlocked;
             console.log(`Capsule ${capsule.public_id}: isUnlocked=${isUnlocked}, message preview="${capsule.message.substring(0, 30)}..."`);
             
@@ -114,10 +113,8 @@ export default function Capsules() {
                       </div>
                     </div>
 
-                    {/* Message preview - Only show for unlocked capsules */}
                     <div className="text-sm text-gray-300 mb-4 leading-relaxed min-h-[2.5rem]">
                       {isUnlocked && !capsule.message.startsWith('🔒') ? (
-                        // Show actual message preview for unlocked capsules
                         <p className="line-clamp-2">
                           {capsule.message.length > 80 
                             ? `${capsule.message.substring(0, 80)}...` 
@@ -125,7 +122,6 @@ export default function Capsules() {
                           }
                         </p>
                       ) : (
-                        // Show locked indicator for locked capsules
                         <div className="flex items-center text-amber-400">
                           <Lock className="h-3 w-3 mr-2 flex-shrink-0" />
                           <span className="text-xs italic">

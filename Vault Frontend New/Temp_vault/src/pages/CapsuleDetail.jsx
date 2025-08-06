@@ -12,7 +12,6 @@ export default function CapsuleDetail() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // Debug logging
   useEffect(() => {
     console.log("CapsuleDetail mounted")
     console.log("URL params:", { public_id })
@@ -59,7 +58,7 @@ export default function CapsuleDetail() {
         <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[70vh]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-400 mx-auto mb-4"></div>
-            <p className="text-slate-300">Loading time capsule...</p>
+            <p className="text-slate-300">Loading vault...</p>
             <p className="text-slate-500 text-sm mt-2">ID: {public_id}</p>
           </div>
         </div>
@@ -81,7 +80,7 @@ export default function CapsuleDetail() {
           <h1 className="text-7xl font-bold bg-gradient-to-r from-blue-400 via-blue-600 to-slate-800 bg-clip-text text-transparent">
             404
           </h1>
-          <h2 className="mt-4 text-2xl font-semibold">Time Capsule Not Found</h2>
+          <h2 className="mt-4 text-2xl font-semibold">Vault Not Found</h2>
           <p className="mt-4 text-muted-foreground max-w-md text-slate-300">
             {error || "The time capsule you're looking for doesn't exist or may have been removed."}
           </p>
@@ -100,7 +99,7 @@ export default function CapsuleDetail() {
               variant="outline"
               className="border-slate-600 text-slate-300 hover:bg-slate-800"
             >
-              <Link to="/capsules">View All Capsules</Link>
+              <Link to="/capsules">View All Vaults</Link>
             </Button>
           </div>
         </div>
@@ -119,7 +118,7 @@ export default function CapsuleDetail() {
           <Button asChild variant="ghost" className="mb-8 hover:bg-slate-800/50 text-slate-300 hover:text-blue-300 transition-all duration-300">
             <Link to="/capsules" className="flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
-              Back to all capsules
+              Back to all vaults
             </Link>
           </Button>
 
@@ -159,7 +158,7 @@ export default function CapsuleDetail() {
                   </div>
                   <h2 className="text-2xl font-medium mb-3 text-slate-200">This Time Capsule is Locked</h2>
                   <p className="text-slate-400 max-w-md mx-auto">
-                    This capsule will be unlocked on {new Date(capsule.unlock_at).toLocaleDateString()}. Come back then to
+                    This vault will be unlocked on {new Date(capsule.unlock_at).toLocaleDateString()}. Come back then to
                     view its contents.
                   </p>
                 </div>
@@ -171,10 +170,10 @@ export default function CapsuleDetail() {
           <div className="mt-10 text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 backdrop-blur-sm border border-blue-500/30">
               <Share2 className="h-4 w-4 text-blue-400" />
-              <span className="text-sm text-slate-300">Time Capsule ID: {capsule.public_id}</span>
+              <span className="text-sm text-slate-300">Vault ID: {capsule.public_id}</span>
             </div>
             <div className="mt-4">
-              <p className="text-sm text-slate-400 mb-2">Share this link to let others view this capsule:</p>
+              <p className="text-sm text-slate-400 mb-2">Share this link to let others view this vault:</p>
               <div className="flex items-center justify-center gap-2 mt-2">
                 <ShareLinkButton capsuleId={capsule.public_id} />
               </div>

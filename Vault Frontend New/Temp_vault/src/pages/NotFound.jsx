@@ -32,10 +32,10 @@ export default function NotFound() {
         </h1>
 
         <h2 className="mt-4 text-2xl font-semibold text-white">
-          Time Capsule Not Found
+          Vault Not Found
         </h2>
         <p className="mt-4 text-muted-foreground max-w-md mx-auto text-white/80">
-          The time capsule you're looking for doesn't exist or may have been removed.
+          The vault you're looking for doesn't exist or may have been removed.
         </p>
 
         <Button

@@ -19,7 +19,7 @@ export default function CreateCapsule() {
     )`
   }}
 >
-  Create a Time Capsule
+  Create a Vault
 </h1>
 
         <CreateCapsuleForm />

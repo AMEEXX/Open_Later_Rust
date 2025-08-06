@@ -80,7 +80,7 @@ pub async fn create_capsule(
         }),
     };
 
-    println!("🎉 Success! Returning response with public_id: {}", response.public_id);
+    println!("Success! Returning response with public_id: {}", response.public_id);
     Ok(Json(response))
 }
 
@@ -98,16 +98,16 @@ pub async fn get_all_capsules(
             Httperror::server_error(err.to_string())
         })?;
 
-    println!("📊 Retrieved {} capsules from database", capsules.len());
+    println!(" Retrieved {} capsules from database", capsules.len());
 
-    // Convert to DTOs - this will automatically hide messages for locked capsules
+    
     let capsule_dtos: Vec<CapsuleDto> = capsules.into_iter().map(Into::into).collect();
     
-    // Count locked vs unlocked for logging
+    
     let unlocked_count = capsule_dtos.iter().filter(|c| c.is_unlocked).count();
     let locked_count = capsule_dtos.len() - unlocked_count;
     
-    println!("🔓 Unlocked capsules: {}, 🔒 Locked capsules: {} (messages hidden)", unlocked_count, locked_count);
+    println!("Unlocked capsules: {}, Locked capsules: {} (messages hidden)", unlocked_count, locked_count);
 
     Ok(Json(capsule_dtos))
 }
@@ -123,15 +123,15 @@ pub async fn get_capsule_by_public_id(
         .get_capsule_by_public_id(&public_id)
         .await
         .map_err(|err| {
-            println!("❌ Database error in get_capsule_by_public_id: {}", err);
+            println!("database error in get_capsule_by_public_id: {}", err);
             Httperror::server_error(err.to_string())
         })?;
 
     match capsule {
         Some(capsule) => {
-            println!("✅ Found capsule: '{}'", capsule.title);
+            println!("found capsule: '{}'", capsule.title);
             
-            // Use the detail DTO for individual capsule view
+            // detail DTO for individual capsule view
             let capsule_detail = capsule.to_detail_dto();
             
             println!("🔒 Returning capsule '{}' - Unlocked: {}", 
@@ -140,7 +140,7 @@ pub async fn get_capsule_by_public_id(
             Ok(Json(capsule_detail))
         }
         None => {
-            println!("❌ No capsule found with public_id: '{}'", public_id);
+            println!("No capsule found with public_id: '{}'", public_id);
             Err(Httperror::bad_request("No such capsule exists".to_string()))
         }
     }

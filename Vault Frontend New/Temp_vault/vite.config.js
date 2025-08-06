@@ -12,19 +12,20 @@ export default defineConfig({
   build: {
     outDir: 'dist',
   },
-  base: './', 
+  base: './',
   server: {
     port: 5173,
     host: true,
-
     historyApiFallback: {
 
       rewrites: [
-        { from: /^\/capsule\/[a-zA-Z0-9_-]+$/, to: '/index.html' },  
-        { from: /^\/capsules$/, to: '/index.html' },
-        { from: /^\/create$/, to: '/index.html' },
-        { from: /^\/(?!api|assets|src|@|node_modules).*/, to: '/index.html' }
-      ]
+        {
+          from: /^\/[^.]*$/,  
+          to: '/index.html'
+        }
+      ],
+
+      disableDotRule: false,
     }
   },
   preview: {
@@ -32,11 +33,12 @@ export default defineConfig({
     host: true,
     historyApiFallback: {
       rewrites: [
-        { from: /^\/capsule\/[a-zA-Z0-9_-]+$/, to: '/index.html' }, 
-        { from: /^\/capsules$/, to: '/index.html' },
-        { from: /^\/create$/, to: '/index.html' },
-        { from: /^\/(?!api|assets|src|@|node_modules).*/, to: '/index.html' }
-      ]
+        {
+          from: /^\/[^.]*$/,  
+          to: '/index.html'
+        }
+      ],
+      disableDotRule: false,
     }
   }
 })

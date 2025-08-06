@@ -7,15 +7,19 @@ import CreateCapsule from './pages/CreateCapsule';
 import NotFound from './pages/NotFound';
 
 function App() {
+  console.log("App component rendered - Routes configured");
+  
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/capsules" element={<Capsules />} />
-        <Route path="/capsule/:id" element={<CapsuleDetail />} />
-        <Route path="/create" element={<CreateCapsule />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <div className="min-h-screen bg-background text-foreground font-sans bg-black">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/capsules" element={<Capsules />} />
+          <Route path="/capsule/:public_id" element={<CapsuleDetail />} />
+          <Route path="/create" element={<CreateCapsule />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
     </Router>
   );
 }

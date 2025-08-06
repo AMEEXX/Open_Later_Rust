@@ -14,6 +14,22 @@ export default defineConfig({
   },
   base: './', 
   server: {
-    historyApiFallback: true
+    port: 5173,
+    host: true,
+   
+    historyApiFallback: {
+      rewrites: [
+        { from: /^\/(?!api).*/, to: '/index.html' }
+      ]
+    }
+  },
+  preview: {
+    port: 4173,
+    host: true,
+    historyApiFallback: {
+      rewrites: [
+        { from: /^\/(?!api).*/, to: '/index.html' }
+      ]
+    }
   }
 })

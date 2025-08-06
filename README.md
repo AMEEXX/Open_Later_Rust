@@ -28,10 +28,14 @@
                                                                              │ - is_unlocked   │
                                                                              └─────────────────┘
 ```
-![Client Layer](./assets/client.png)
-![APi Layer](./assets/api.png)
-![Data Layer](./assests/data.png)
-![Logic](./data/logic.png)
+![Client Architecture](./Vault%20Frontend%20New/Temp_vault/src/assets/client.png)
+
+![API Layer](./Vault%20Frontend%20New/Temp_vault/src/assets/api.png)
+
+![Data Layer](./Vault%20Frontend%20New/Temp_vault/src/assets/data.png)
+
+![Logic](./Vault%20Frontend%20New/Temp_vault/src/assets/logic.png)
+
 
  
 ##  User Flow

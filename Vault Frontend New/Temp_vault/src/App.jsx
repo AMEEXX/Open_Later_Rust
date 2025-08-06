@@ -6,25 +6,11 @@ import CapsuleDetail from './pages/CapsuleDetail'
 import CreateCapsule from './pages/CreateCapsule'
 import NotFound from './pages/NotFound'
 
-// Debug component to show current route info
-function RouteDebugger() {
-  const location = useLocation()
-  
-  if (import.meta.env.DEV) {
-    return (
-      <div className="fixed top-0 left-0 bg-black/90 text-white p-2 text-xs z-50 border-b border-gray-600">
-        <div>🌐 URL: {window.location.href}</div>
-        <div>📍 Pathname: {location.pathname}</div>
-        <div>🔍 Search: {location.search}</div>
-        <div>🏷️ Hash: {location.hash}</div>
-      </div>
-    )
-  }
-  return null
-}
+
+
 
 function App() {
-  console.log("🚀 App component rendered")
+  console.log(" App component rendered")
   
   return (
     <Router>

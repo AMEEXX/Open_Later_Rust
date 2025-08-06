@@ -6,8 +6,8 @@ import { Lock, Unlock, Calendar, Clock } from "lucide-react";
 export default function Home() {
   const [capsules, setCapsules] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [displayedText, setDisplayedText] = useState('');
-  const fullText = 'Future Vault';
+  const [displayedText, setDisplayedText] = useState("");
+  const fullText = "Future Vault";
 
   useEffect(() => {
     const fetchCapsules = async () => {
@@ -24,7 +24,7 @@ export default function Home() {
 
     fetchCapsules();
   }, []);
-  
+
   useEffect(() => {
     let index = 0;
     const interval = setInterval(() => {
@@ -100,7 +100,7 @@ export default function Home() {
             </svg>
           </div>
 
-          <h1 
+          <h1
             className="text-8xl sm:text-7xl lg:text-8xl font-bold mb-12 font-sans bg-clip-text text-transparent leading-tight relative min-h-[6rem]"
             style={{
               backgroundImage: `
@@ -116,9 +116,7 @@ export default function Home() {
               `,
             }}
           >
-            <span className="inline-block">
-              {displayedText}
-            </span>
+            <span className="inline-block">{displayedText}</span>
             {displayedText.length < fullText.length && (
               <span className="absolute bottom-2 w-[6px] h-24 bg-white ml-1"></span>
             )}
@@ -231,102 +229,120 @@ export default function Home() {
                     to={`/capsule/${capsule.public_id}`}
                     className="flex-1 block group"
                   >
-                    <div 
-                      className="relative bg-white/5 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-white/10 hover:border-white/20 group-hover:-translate-y-2 transition-all duration-500 hover:shadow-2xl transform translate-y-10 opacity-0 animate-[slideUp_0.5s_ease-out_forwards]"
-                      style={{ animationDelay: `${index * 0.15}s` }}
+                    <div
+                      className="relative bg-white/5 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-white/10 transition-all duration-500 hover:shadow-2xl transform translate-y-10 opacity-0 animate-[slideUp_0.5s_ease-out_forwards] hover:z-10"
+                      style={{
+                        animationDelay: `${index * 0.15}s`,
+                        // Add perspective for 3D effect
+                        transformStyle: "preserve-3d",
+                      }}
                     >
+                      {/* Enhanced hover effect layers */}
                       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                      
-                      <div className="relative z-10">
+
+                      {/* Depth effect elements */}
+                      <div
+                        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-500"
+                        style={{
+                          background:
+                            "linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%)",
+                          transform: "translateZ(20px)",
+                          filter: "blur(1px)",
+                        }}
+                      ></div>
+
+                      <div className="relative z-10 transform group-hover:-translate-y-2 group-hover:scale-[1.02] transition-transform duration-500">
                         {/* Header with title and status */}
                         <div className="flex items-start justify-between mb-4">
-                          <h3 className="text-xl font-semibold text-blue-200 leading-tight flex-1 pr-2">
+                          <h3 className="text-xl font-semibold text-blue-200 leading-tight flex-1 pr-2 group-hover:text-white transition-colors duration-300">
                             {capsule.title}
                           </h3>
-                          <div className="flex-shrink-0">
+                          <div className="flex-shrink-0 transform group-hover:scale-110 transition-transform duration-300">
                             {isUnlocked ? (
-                              <Unlock className="h-5 w-5 text-green-400" />
+                              <Unlock className="h-5 w-5 text-green-400 group-hover:text-green-300 transition-colors duration-300" />
                             ) : (
-                              <Lock className="h-5 w-5 text-amber-400" />
+                              <Lock className="h-5 w-5 text-amber-400 group-hover:text-amber-300 transition-colors duration-300" />
                             )}
                           </div>
                         </div>
 
                         {/* Author */}
-                        <p className="text-gray-400 text-sm mb-4">By {capsule.name}</p>
+                        <p className="text-gray-400 text-sm mb-4 group-hover:text-gray-300 transition-colors duration-300">
+                          By {capsule.name}
+                        </p>
 
                         {/* Message preview */}
-                        <div className="text-sm text-gray-300 mb-6 leading-relaxed min-h-[3rem]">
-                          {isUnlocked && !capsule.message.startsWith('🔒') ? (
+                        <div className="text-sm text-gray-300 mb-6 leading-relaxed min-h-[3rem] group-hover:text-gray-100 transition-colors duration-300">
+                          {isUnlocked && !capsule.message.startsWith("🔒") ? (
                             <p className="line-clamp-3">
-                              {capsule.message.length > 120 
-                                ? `${capsule.message.substring(0, 120)}...` 
-                                : capsule.message
-                              }
+                              {capsule.message.length > 120
+                                ? `${capsule.message.substring(0, 120)}...`
+                                : capsule.message}
                             </p>
                           ) : (
-                            <div className="flex items-center text-amber-400">
+                            <div className="flex items-center text-amber-400 group-hover:text-amber-300 transition-colors duration-300">
                               <Lock className="h-4 w-4 mr-2 flex-shrink-0" />
                               <span className="text-sm italic">
-                                Message will be revealed on {new Date(capsule.unlock_at).toLocaleDateString()}
+                                Message will be revealed on{" "}
+                                {new Date(
+                                  capsule.unlock_at
+                                ).toLocaleDateString()}
                               </span>
                             </div>
                           )}
                         </div>
 
                         {/* Footer with dates and status */}
-                        <div className="space-y-3 pt-4 border-t border-white/10">
+                        <div className="space-y-3 pt-4 border-t border-white/10 group-hover:border-white/20 transition-colors duration-300">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center text-xs text-gray-500">
+                            <div className="flex items-center text-xs text-gray-500 group-hover:text-gray-400 transition-colors duration-300">
                               <Calendar className="h-3 w-3 mr-1" />
-                              Created: {capsule.created_at 
-                                ? new Date(capsule.created_at).toLocaleDateString()
-                                : 'Unknown'
-                              }
+                              Created:{" "}
+                              {capsule.created_at
+                                ? new Date(
+                                    capsule.created_at
+                                  ).toLocaleDateString()
+                                : "Unknown"}
                             </div>
-                            
+
                             <span
-                              className={`text-xs font-medium px-2 py-1 rounded-full border ${
+                              className={`text-xs font-medium px-2 py-1 rounded-full border transition-all duration-300 ${
                                 isUnlocked
-                                  ? "text-green-400 bg-green-900/20 border-green-700/30"
-                                  : "text-amber-400 bg-amber-900/20 border-amber-700/30"
+                                  ? "text-green-400 bg-green-900/20 border-green-700/30 group-hover:bg-green-900/30 group-hover:border-green-700/50 group-hover:text-green-300"
+                                  : "text-amber-400 bg-amber-900/20 border-amber-700/30 group-hover:bg-amber-900/30 group-hover:border-amber-700/50 group-hover:text-amber-300"
                               }`}
                             >
                               {isUnlocked ? "Unlocked" : "Locked"}
                             </span>
                           </div>
 
-                          <div className="flex items-center text-xs text-gray-500">
+                          <div className="flex items-center text-xs text-gray-500 group-hover:text-gray-400 transition-colors duration-300">
                             <Clock className="h-3 w-3 mr-1 flex-shrink-0" />
                             <span>
-                              {isUnlocked 
-                                ? `Unlocked: ${new Date(capsule.unlock_at).toLocaleDateString()}`
-                                : `Unlocks: ${new Date(capsule.unlock_at).toLocaleDateString()}`
-                              }
+                              {isUnlocked
+                                ? `Unlocked: ${new Date(
+                                    capsule.unlock_at
+                                  ).toLocaleDateString()}`
+                                : `Unlocks: ${new Date(
+                                    capsule.unlock_at
+                                  ).toLocaleDateString()}`}
                             </span>
                           </div>
                         </div>
                       </div>
+
+                      {/* Shadow effect on hover */}
+                      <div
+                        className="absolute -bottom-2 left-4 right-4 h-4 rounded-b-2xl bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                        style={{
+                          filter: "blur(8px)",
+                          transform: "translateZ(-10px) scale(0.95)",
+                        }}
+                      ></div>
                     </div>
                   </Link>
                 );
               })}
-            </div>
-          </div>
-        )}
-
-        {/* Locked Capsules Teaser */}
-        {lockedCapsules.length > 0 && (
-          <div className="mt-16 text-center">
-            <div className="inline-block bg-white/5 backdrop-blur-lg px-8 py-4 rounded-2xl border border-white/10 shadow-xl">
-              <div className="flex items-center space-x-3">
-                <div className="w-4 h-4 bg-amber-400/70 rounded-full animate-pulse"></div>
-                <span className="text-gray-300 text-lg">
-                  {lockedCapsules.length} more capsule
-                  {lockedCapsules.length !== 1 ? "s are" : " is"} waiting to be
-                  unlocked...
-                </span>
-              </div>
             </div>
           </div>
         )}

@@ -12,8 +12,16 @@ export default function CapsuleDetail() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  // Debug logging
+  useEffect(() => {
+    console.log("CapsuleDetail mounted")
+    console.log("URL params:", { public_id })
+    console.log("Current URL:", window.location.href)
+  }, [])
+
   useEffect(() => {
     if (!public_id) {
+      console.error("No public_id provided in URL params")
       setError("No capsule ID provided")
       setLoading(false)
       return
@@ -21,13 +29,21 @@ export default function CapsuleDetail() {
 
     const fetchCapsule = async () => {
       try {
+        console.log(`Attempting to fetch capsule with public_id: "${public_id}"`)
         setLoading(true)
         setError(null)
+        
         const data = await getCapsuleByPublicId(public_id)
+        console.log("Successfully fetched capsule data:", data)
         setCapsule(data)
       } catch (error) {
         console.error("Error fetching capsule:", error)
-        setError("Failed to load capsule")
+        console.error("Error details:", {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status
+        })
+        setError(error.message || "Failed to load capsule")
       } finally {
         setLoading(false)
       }
@@ -36,6 +52,7 @@ export default function CapsuleDetail() {
     fetchCapsule()
   }, [public_id])
 
+  // Show loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-[#0b0e14] to-[#111827] text-white">
@@ -43,12 +60,14 @@ export default function CapsuleDetail() {
           <div className="text-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-400 mx-auto mb-4"></div>
             <p className="text-slate-300">Loading time capsule...</p>
+            <p className="text-slate-500 text-sm mt-2">ID: {public_id}</p>
           </div>
         </div>
       </div>
     )
   }
 
+  // Show error state
   if (error || !capsule) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-[#0b0e14] to-[#111827] text-white">
@@ -66,23 +85,37 @@ export default function CapsuleDetail() {
           <p className="mt-4 text-muted-foreground max-w-md text-slate-300">
             {error || "The time capsule you're looking for doesn't exist or may have been removed."}
           </p>
-          <Button
-            asChild
-            className="mt-8 bg-gradient-to-r from-blue-500 via-blue-600 to-slate-700 hover:opacity-90 transition-all duration-300"
-          >
-            <Link to="/">Return Home</Link>
-          </Button>
+          <p className="mt-2 text-slate-500 text-sm">
+            Searched for ID: {public_id}
+          </p>
+          <div className="flex gap-4 mt-8">
+            <Button
+              asChild
+              className="bg-gradient-to-r from-blue-500 via-blue-600 to-slate-700 hover:opacity-90 transition-all duration-300"
+            >
+              <Link to="/">Return Home</Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="border-slate-600 text-slate-300 hover:bg-slate-800"
+            >
+              <Link to="/capsules">View All Capsules</Link>
+            </Button>
+          </div>
         </div>
       </div>
     )
   }
 
+  // Determine if capsule is unlocked
   const isUnlocked = new Date(capsule.unlock_at) <= new Date()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-[#0b0e14] to-[#111827] text-white">
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-3xl mx-auto">
+          {/* Back button */}
           <Button asChild variant="ghost" className="mb-8 hover:bg-slate-800/50 text-slate-300 hover:text-blue-300 transition-all duration-300">
             <Link to="/capsules" className="flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
@@ -90,6 +123,7 @@ export default function CapsuleDetail() {
             </Link>
           </Button>
 
+          {/* Main capsule card */}
           <Card className="border border-slate-700/30 shadow-2xl bg-slate-800/90 backdrop-blur-sm rounded-xl overflow-hidden">
             <div className="h-2 bg-gradient-to-r from-blue-400 via-blue-500 to-blue-700"></div>
             <CardHeader className="pt-8 pb-4">

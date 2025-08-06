@@ -6,11 +6,31 @@ import CapsuleDetail from './pages/CapsuleDetail'
 import CreateCapsule from './pages/CreateCapsule'
 import NotFound from './pages/NotFound'
 
-
-
+// Route debugger component for development
+function RouteDebugger() {
+  const location = useLocation()
+  
+  // Only show in development
+  if (process.env.NODE_ENV === 'production') return null
+  
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      right: 0,
+      background: 'rgba(0,0,0,0.8)',
+      color: 'white',
+      padding: '10px',
+      fontSize: '12px',
+      zIndex: 9999
+    }}>
+      Current Route: {location.pathname}
+    </div>
+  )
+}
 
 function App() {
-  console.log(" App component rendered")
+  console.log("App component rendered")
   
   return (
     <Router>
@@ -19,12 +39,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/capsules" element={<Capsules />} />
-          
-          {/* Try multiple route patterns to see which one works */}
           <Route path="/capsule/:public_id" element={<CapsuleDetail />} />
-          <Route path="/capsule/:id" element={<CapsuleDetail />} />
-          <Route path="/capsule/:publicId" element={<CapsuleDetail />} />
-          
           <Route path="/create" element={<CreateCapsule />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

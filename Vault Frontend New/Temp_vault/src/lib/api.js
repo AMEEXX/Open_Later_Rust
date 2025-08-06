@@ -18,7 +18,13 @@ const apiClient = axios.create({
 // Add request interceptor for logging
 apiClient.interceptors.request.use(
   (config) => {
-    console.log(`Making ${config.method?.toUpperCase()} request to: ${config.url}`);
+    console.log(`Making ${config.method?.toUpperCase()} request to: ${config.baseURL}${config.url}`);
+    console.log("Request config:", {
+      url: config.url,
+      method: config.method,
+      baseURL: config.baseURL,
+      fullURL: `${config.baseURL}${config.url}`
+    });
     return config;
   },
   (error) => {
@@ -30,17 +36,23 @@ apiClient.interceptors.request.use(
 // Add response interceptor for better error handling
 apiClient.interceptors.response.use(
   (response) => {
-    console.log(`Response received from ${response.config.url}:`, response.status);
+    console.log(`✅ Response received from ${response.config.url}:`, {
+      status: response.status,
+      statusText: response.statusText,
+      data: response.data
+    });
     return response;
   },
   (error) => {
-    console.error("API Error:", {
+    console.error("❌ API Error:", {
       url: error.config?.url,
       method: error.config?.method,
+      fullURL: error.config ? `${error.config.baseURL}${error.config.url}` : 'unknown',
       status: error.response?.status,
       statusText: error.response?.statusText,
       data: error.response?.data,
-      message: error.message
+      message: error.message,
+      code: error.code
     });
     
     // Handle specific error cases
@@ -60,33 +72,39 @@ apiClient.interceptors.response.use(
 
 export const getAllCapsules = async () => {
   try {
-    console.log("Fetching all capsules...");
+    console.log("📋 Fetching all capsules...");
     const res = await apiClient.get("/capsules");
-    console.log("Successfully fetched capsules:", res.data?.length || 0, "items");
+    console.log("✅ Successfully fetched capsules:", res.data?.length || 0, "items");
     return res.data;
   } catch (error) {
-    console.error("Error in getAllCapsules:", error);
+    console.error("❌ Error in getAllCapsules:", error);
     throw error;
   }
 };
 
 export const getCapsuleByPublicId = async (public_id) => {
   try {
-    console.log(`Fetching capsule with public_id: ${public_id}`);
+    console.log(`🔍 Fetching capsule with public_id: "${public_id}"`);
     
     if (!public_id) {
       throw new Error("Public ID is required");
     }
+
+    // Clean up the public_id (remove any whitespace or special characters)
+    const cleanPublicId = public_id.trim();
+    console.log(`🧹 Cleaned public_id: "${cleanPublicId}"`);
     
-    const res = await apiClient.get(`/capsule/${public_id}`);
-    console.log("Successfully fetched capsule:", res.data);
+    const res = await apiClient.get(`/capsule/${cleanPublicId}`);
+    console.log("✅ Successfully fetched capsule:", res.data);
     return res.data;
   } catch (error) {
-    console.error(`Error in getCapsuleByPublicId for ID ${public_id}:`, error);
+    console.error(`❌ Error in getCapsuleByPublicId for ID "${public_id}":`, error);
     
     // Enhance error message based on status
     if (error.response?.status === 404) {
       error.message = `Capsule with ID "${public_id}" not found`;
+    } else if (error.response?.status === 400) {
+      error.message = `Bad request for capsule ID "${public_id}": ${error.response?.data?.message || 'Invalid request'}`;
     }
     
     throw error;
@@ -95,12 +113,28 @@ export const getCapsuleByPublicId = async (public_id) => {
 
 export const createCapsule = async (data) => {
   try {
-    console.log("Creating capsule with data:", { ...data, message: `${data.message?.substring(0, 50)}...` });
+    console.log("📝 Creating capsule with data:", { 
+      ...data, 
+      message: `${data.message?.substring(0, 50)}...` 
+    });
     const res = await apiClient.post("/create", data);
-    console.log("Successfully created capsule:", res.data);
+    console.log("✅ Successfully created capsule:", res.data);
     return res.data;
   } catch (error) {
-    console.error("Error in createCapsule:", error);
+    console.error("❌ Error in createCapsule:", error);
     throw error;
+  }
+};
+
+// Test function to check API connectivity
+export const testConnection = async () => {
+  try {
+    console.log("🔌 Testing API connection...");
+    const res = await apiClient.get("/");
+    console.log("✅ API connection test successful:", res.status);
+    return true;
+  } catch (error) {
+    console.error("❌ API connection test failed:", error);
+    return false;
   }
 };

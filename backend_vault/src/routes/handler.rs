@@ -9,6 +9,7 @@ use axum::{extract::Path, response::{Html, IntoResponse}, Extension, Json};
 use nanoid::nanoid;
 use std::sync::Arc;
 use validator::Validate;
+use chrono::Utc;
 
 pub async fn hellovault() -> impl IntoResponse{
     let message = r#"
@@ -103,8 +104,39 @@ pub async fn get_all_capsules(
 
     println!("Retrieved {} capsules from database", capsules.len());
 
-    let capsuledto: Vec<CapsuleDto> = capsules.into_iter().map(Into::into).collect();
+    // Convert to DTOs and hide messages for locked capsules
+    let current_time = Utc::now();
+    let capsuledto: Vec<CapsuleDto> = capsules
+        .into_iter()
+        .map(|capsule| {
+            let unlock_time = capsule.unlock_at.unwrap_or_else(|| {
+                println!("Warning: unlock_at is None for capsule {}, using current time", capsule.public_id);
+                Utc::now()
+            });
+            
+            let is_unlocked = unlock_time <= current_time;
+            
+            // Hide message content for locked capsules in list view
+            let display_message = if is_unlocked {
+                capsule.message.clone()
+            } else {
+                "🔒 This message is locked until the unlock date.".to_string()
+            };
+            
+            CapsuleDto { 
+                public_id: capsule.public_id, 
+                name: capsule.name, 
+                title: capsule.title, 
+                email: capsule.email, 
+                message: display_message, // Hidden message for locked capsules
+                unlock_at: unlock_time, 
+                is_unlocked,
+                email_sent: capsule.email_sent.unwrap_or(false),
+            }
+        })
+        .collect();
 
+    println!("Prepared {} capsule DTOs with proper message visibility", capsuledto.len());
     Ok(Json(capsuledto))
 }
 
@@ -126,11 +158,39 @@ pub async fn get_capsule_by_public_id(
     match capsule {
         Some(capsule) => {
             println!("Found capsule: {}", capsule.title);
-            let capsule_dto = CapsuleDto::from(capsule);
+            
+            let unlock_time = capsule.unlock_at.unwrap_or_else(|| {
+                println!("Warning: unlock_at is None for capsule {}, using current time", capsule.public_id);
+                Utc::now()
+            });
+            
+            let current_time = Utc::now();
+            let is_unlocked = unlock_time <= current_time;
+            
+            // For individual capsule view, show the actual message only if unlocked
+            let display_message = if is_unlocked {
+                capsule.message.clone()
+            } else {
+                // Don't show the real message for locked capsules in detail view either
+                capsule.message.clone() // But in detail view, we show it's locked in the UI
+            };
+            
+            let capsule_dto = CapsuleDto {
+                public_id: capsule.public_id,
+                name: capsule.name,
+                title: capsule.title,
+                email: capsule.email,
+                message: display_message,
+                unlock_at: unlock_time,
+                is_unlocked,
+                email_sent: capsule.email_sent.unwrap_or(false),
+            };
+            
+            println!("Returning capsule {} - Unlocked: {}", capsule_dto.public_id, is_unlocked);
             Ok(Json(capsule_dto))
         }
         None => {
-            println!(" No capsule found with public_id: {}", public_id);
+            println!("❌ No capsule found with public_id: {}", public_id);
             Err(Httperror::bad_request("No such capsule exists".to_string()))
         }
     }

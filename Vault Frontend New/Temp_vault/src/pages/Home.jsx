@@ -162,40 +162,58 @@ export default function Home() {
             </h2>
 
             <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
-              {capsules.slice(0, 3).map((capsule, index) => (
-                <Link key={capsule.public_id} to={`/capsule/${capsule.public_id}`} className="flex-1 block group">
-                  <div className="relative bg-white/5 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-white/10 hover:border-white/20 group-hover:-translate-y-2 transition-all duration-500 hover:shadow-2xl">
-                    {/* Subtle glow effect on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    
-                    <div className="relative z-10">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-xl font-semibold text-gray-200 group-hover:text-white transition-colors duration-300">
-                          {capsule.title}
-                        </h3>
-                        <div className={`w-8 h-8 ${capsule.is_unlocked ? 'bg-emerald-500/20' : 'bg-amber-500/20'} rounded-full flex items-center justify-center group-hover:${capsule.is_unlocked ? 'bg-emerald-500/30' : 'bg-amber-500/30'} transition-colors duration-300`}>
-                          {capsule.is_unlocked ? (
-                            <svg className="w-4 h-4 text-emerald-400 group-hover:text-emerald-300 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
-                            </svg>
-                          ) : (
-                            <svg className="w-4 h-4 text-amber-400 group-hover:text-amber-300 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                          )}
+              {capsules.slice(0, 3).map((capsule, index) => {
+                // Double-check unlock status on frontend
+                const isUnlocked = new Date(capsule.unlock_at) <= new Date()
+                
+                return (
+                  <Link key={capsule.public_id} to={`/capsule/${capsule.public_id}`} className="flex-1 block group">
+                    <div className="relative bg-white/5 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-white/10 hover:border-white/20 group-hover:-translate-y-2 transition-all duration-500 hover:shadow-2xl">
+                      {/* Subtle glow effect on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      
+                      <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-xl font-semibold text-gray-200 group-hover:text-white transition-colors duration-300">
+                            {capsule.title}
+                          </h3>
+                          <div className={`w-8 h-8 ${isUnlocked ? 'bg-emerald-500/20' : 'bg-amber-500/20'} rounded-full flex items-center justify-center group-hover:${isUnlocked ? 'bg-emerald-500/30' : 'bg-amber-500/30'} transition-colors duration-300`}>
+                            {isUnlocked ? (
+                              <svg className="w-4 h-4 text-emerald-400 group-hover:text-emerald-300 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                              </svg>
+                            ) : (
+                              <svg className="w-4 h-4 text-amber-400 group-hover:text-amber-300 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                              </svg>
+                            )}
+                          </div>
                         </div>
+                        <p className="text-gray-400 mb-2 group-hover:text-gray-300 transition-colors duration-300">By {capsule.name}</p>
+                        <p className="text-sm text-gray-500 mb-4 group-hover:text-gray-400 transition-colors duration-300">
+                          {isUnlocked ? 'Unlocked' : 'Unlocks'}: {new Date(capsule.unlock_at).toLocaleDateString()}
+                        </p>
+                        
+                        {/* Show message preview only for unlocked capsules */}
+                        <p className="text-gray-300 text-sm leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
+                          {isUnlocked ? (
+                            // Show preview of actual message for unlocked capsules
+                            capsule.message.substring(0, 100) + (capsule.message.length > 100 ? "..." : "")
+                          ) : (
+                            // Show locked message indicator for locked capsules
+                            <span className="flex items-center text-amber-400">
+                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                              </svg>
+                              Message locked until {new Date(capsule.unlock_at).toLocaleDateString()}
+                            </span>
+                          )}
+                        </p>
                       </div>
-                      <p className="text-gray-400 mb-2 group-hover:text-gray-300 transition-colors duration-300">By {capsule.name}</p>
-                      <p className="text-sm text-gray-500 mb-4 group-hover:text-gray-400 transition-colors duration-300">
-                        {capsule.is_unlocked ? 'Unlocked' : 'Unlocks'}: {new Date(capsule.unlock_at).toLocaleDateString()}
-                      </p>
-                      <p className="text-gray-300 text-sm leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
-                        {capsule.message.substring(0, 100)}{capsule.message.length > 100 ? "..." : ""}
-                      </p>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                )
+              })}
             </div>
           </div>
         )}
@@ -207,7 +225,7 @@ export default function Home() {
               <div className="flex items-center space-x-3">
                 <div className="w-4 h-4 bg-amber-400/70 rounded-full animate-pulse"></div>
                 <span className="text-gray-300 text-lg">
-                  {lockedCapsules.length} more capsule{lockedCapsules.length !== 1 ? "s are" : " is"} waiting to be unlocked...
+                  {lockedCapsules.length} more vaults{lockedCapsules.length !== 1 ? "s are" : " is"} waiting to be unlocked...
                 </span>
               </div>
             </div>
@@ -215,7 +233,7 @@ export default function Home() {
         )}
       </div>
 
-      {/* Bottom fade effect */}
+
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-800 to-transparent pointer-events-none"></div>
     </div>
   )

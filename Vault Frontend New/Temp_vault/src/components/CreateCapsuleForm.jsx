@@ -102,7 +102,7 @@ export function CreateCapsuleForm() {
 
           <div className="space-y-2">
             <Label htmlFor="title" className="text-base text-white">
-              Capsule Title
+              Vault Title
             </Label>
             <Input
               id="title"

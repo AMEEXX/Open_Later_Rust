@@ -33,7 +33,7 @@ export default function Capsules() {
 
   return (
     <div className="min-h-screen px-4 py-16 bg-gradient-to-br from-black via-[#0b0e14] to-[#111827] text-white">
-      {/* Home Button */}
+
       <div className="absolute top-6 left-6">
         <Link
           to="/"
@@ -71,7 +71,7 @@ export default function Capsules() {
           )`,
         }}
       >
-        Time Capsules
+        Future Vault
       </h1>
 
       {capsules.length === 0 ? (
@@ -82,9 +82,9 @@ export default function Capsules() {
               <Clock className="h-10 w-10 text-white" />
             </div>
           </div>
-          <h2 className="text-2xl font-medium mb-3">No Unlocked Capsules Yet</h2>
+          <h2 className="text-2xl font-medium mb-3">No Unlocked Vaults Yet</h2>
           <p className="text-gray-400">
-            There are no unlocked time capsules available at the moment.
+            There are no unlocked time vaults available at the moment.
           </p>
         </div>
       ) : (

@@ -7,12 +7,8 @@ use crate::{
 
 use axum::{extract::Path, response::{Html, IntoResponse}, Extension, Json};
 use nanoid::nanoid;
-
-
-
 use std::sync::Arc;
 use validator::Validate;
-
 
 pub async fn hellovault() -> impl IntoResponse{
     let message = r#"
@@ -25,20 +21,37 @@ pub async fn hellovault() -> impl IntoResponse{
             <li>POST <code>/create</code> – Create a new capsule</li>
         </ul>
     "#;
-Html(message)
-
+    Html(message)
 }
+
 pub async fn create_capsule(
     Extension(app_state): Extension<Arc<AppState>>,
     Json(payload): Json<CreateCapsuleRequest>,
 ) -> Result<impl IntoResponse, Httperror> {
-    payload
-        .validate()
-        .map_err(|err| Httperror::bad_request(err.to_string()))?;
+    
+    println!("🔍 CREATE CAPSULE REQUEST:");
+    println!("  Name: '{}'", payload.name);
+    println!("  Email: '{}'", payload.email);
+    println!("  Title: '{}'", payload.title);
+    println!("  Message length: {} chars", payload.message.len());
+    println!("  Unlock at: {}", payload.unlock_at);
 
+    // Validate the payload
+    match payload.validate() {
+        Ok(_) => println!("Validation passed"),
+        Err(e) => {
+            println!("Validation failed: {}", e);
+            return Err(Httperror::bad_request(format!("Validation error: {}", e)));
+        }
+    }
+
+    
     let public_id: String = nanoid!(10);
+    println!("📝 Generated public_id: {}", public_id);
 
-    let capsule = app_state
+    
+    println!("💾 Attempting database insert...");
+    let capsule = match app_state
         .db_client
         .create_capsule(
             &payload.name,
@@ -49,41 +62,76 @@ pub async fn create_capsule(
             &public_id,
         )
         .await
-        .map_err(|err| Httperror::server_error(err.to_string()))?;
-
-    let response = CreateCapsuleResponse {
-        public_id: capsule.public_id,
-        unlock_at: capsule.unlock_at.unwrap(),
+    {
+        Ok(capsule) => {
+            println!("Database insert successful!");
+            println!("  Created capsule with ID: {}", capsule.public_id);
+            capsule
+        }
+        Err(err) => {
+            println!("Database error: {}", err);
+            return Err(Httperror::server_error(format!("Database error: {}", err)));
+        }
     };
 
+    
+    let response = CreateCapsuleResponse {
+        public_id: capsule.public_id,
+        unlock_at: capsule.unlock_at.unwrap_or_else(|| {
+            println!("Warning: unlock_at was None, using original payload date");
+            payload.unlock_at
+        }),
+    };
+
+    println!("🎉 Success! Returning response with public_id: {}", response.public_id);
     Ok(Json(response))
 }
 
 pub async fn get_all_capsules(
     Extension(app_state): Extension<Arc<AppState>>,
 ) -> Result<impl IntoResponse, Httperror> {
+    println!("GET ALL CAPSULES request received");
+
     let capsules = app_state
         .db_client
         .get_all_capsules()
         .await
-        .map_err(|err| Httperror::server_error(err.to_string()))?;
+        .map_err(|err| {
+            println!("Database error in get_all_capsules: {}", err);
+            Httperror::server_error(err.to_string())
+        })?;
+
+    println!("Retrieved {} capsules from database", capsules.len());
 
     let capsuledto: Vec<CapsuleDto> = capsules.into_iter().map(Into::into).collect();
 
     Ok(Json(capsuledto))
 }
 
-pub async fn get_capsule_by_public_id(Extension(app_state): Extension<Arc<AppState>>, Path(public_id):Path<String>) ->Result<impl IntoResponse, Httperror>{
+pub async fn get_capsule_by_public_id(
+    Extension(app_state): Extension<Arc<AppState>>, 
+    Path(public_id): Path<String>
+) -> Result<impl IntoResponse, Httperror> {
+    println!("🔍 GET CAPSULE BY ID: {}", public_id);
 
-    let capsule = app_state.db_client.get_capsule_by_public_id(&public_id).await.map_err(|err| Httperror::server_error(err.to_string()))?;
-    match capsule{
-        Some(capsule) => {let capsule_dto = CapsuleDto ::from(capsule);
-         Ok(Json(capsule_dto))}
-        None => Err(Httperror ::bad_request("No such capsule exist".to_string())),
+    let capsule = app_state
+        .db_client
+        .get_capsule_by_public_id(&public_id)
+        .await
+        .map_err(|err| {
+            println!("Database error in get_capsule_by_public_id: {}", err);
+            Httperror::server_error(err.to_string())
+        })?;
 
+    match capsule {
+        Some(capsule) => {
+            println!("Found capsule: {}", capsule.title);
+            let capsule_dto = CapsuleDto::from(capsule);
+            Ok(Json(capsule_dto))
+        }
+        None => {
+            println!(" No capsule found with public_id: {}", public_id);
+            Err(Httperror::bad_request("No such capsule exists".to_string()))
+        }
     }
-
-   
-
-
 }

@@ -20,7 +20,7 @@ pub struct AppState {
 
 #[tokio::main]
 async fn main() {
-    // Enhanced logging
+    
     tracing_subscriber::fmt()
         .with_max_level(LevelFilter::DEBUG)
         .init();
@@ -39,7 +39,7 @@ async fn main() {
         .await
     {
         Ok(pool) => {
-            println!("✅ Connection to the database is successful");
+            println!(" Connection to the database is successful");
             pool
         }
         Err(err) => {

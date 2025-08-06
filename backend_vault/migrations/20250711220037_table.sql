@@ -4,7 +4,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
     CREATE TABLE IF NOT EXISTS capsules (
             id UUID PRIMARY KEY DEFAULT  uuid_generate_v4(),
             public_id TEXT UNIQUE NOT NULL,
-            name TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL,
             email TEXT NOT NULL,
             title TEXT NOT NULL,
             message TEXT NOT NULL,

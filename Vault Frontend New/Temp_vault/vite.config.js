@@ -11,34 +11,26 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      }
+    }
   },
-  base: './',
+  base: '/',
   server: {
     port: 5173,
     host: true,
     historyApiFallback: {
-
-      rewrites: [
-        {
-          from: /^\/[^.]*$/,  
-          to: '/index.html'
-        }
-      ],
-
-      disableDotRule: false,
+      index: '/index.html',
     }
   },
   preview: {
     port: 4173,
     host: true,
     historyApiFallback: {
-      rewrites: [
-        {
-          from: /^\/[^.]*$/,  
-          to: '/index.html'
-        }
-      ],
-      disableDotRule: false,
+      index: '/index.html',
     }
   }
 })

@@ -34,10 +34,12 @@ Think of it like "a letter to your future self" or "a digital time capsule for m
 ```
 
 ![Client Architecture](./Vault%20Frontend%20New/Temp_vault/src/assets/client.png)
-![API Layer](./Vault%20Frontend%20New/Temp_vault/src/assets/api.png)
-![Data Layer](./Vault%20Frontend%20New/Temp_vault/src/assets/data.png)
-![Logic](./Vault%20Frontend%20New/Temp_vault/src/assets/logic.png)
 
+![API Layer](./Vault%20Frontend%20New/Temp_vault/src/assets/api.png)
+
+![Data Layer](./Vault%20Frontend%20New/Temp_vault/src/assets/data.png)
+
+![Logic](./Vault%20Frontend%20New/Temp_vault/src/assets/logic.png)
 ---
 
 ## Project Architecture (High-Level)

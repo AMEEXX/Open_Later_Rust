@@ -1,4 +1,4 @@
-# Future Vault – Digital Time Capsule Application
+# Open Later - Future Vault Application
 
 ## Project Concept
 

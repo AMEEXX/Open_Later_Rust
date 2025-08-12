@@ -1,24 +1,28 @@
-# OpenLater - Future Vault Application
+# Future Vault – Digital Time Capsule Application
 
-##  Project Concept
-**OpenLater** is a future vault application that allows users to create messages for their future selves. Users write personal notes, set a future unlock date, and the message remains sealed until that date arrives.
+## Project Concept
 
-##  System Architecture
+**Future Vault** is a digital time capsule application that allows users to write messages or memories today, lock them until a future date they choose, and share them with others. The vault automatically unlocks on the specified date.
+Think of it like "a letter to your future self" or "a digital time capsule for memories."
+
+---
+
+## System Architecture
 
 ```
 ┌─────────────────┐    HTTP/JSON     ┌──────────────────┐    SQL Queries    ┌─────────────────┐
 │                 │    Requests      │                  │                   │                 │
 │   Frontend      │ ◄─────────────►  │   Rust Backend   │ ◄──────────────►  │   PostgreSQL    │
-│   (React/Vue)   │                  │   (Axum Server)  │                   │   Database      │
+│   (React/Vite)  │                  │   (Axum Server)  │                   │   Database      │
 │                 │                  │                  │                   │                 │
 └─────────────────┘                  └──────────────────┘                   └─────────────────┘
         │                                     │                                      │
         │                                     │                                      │
         ▼                                     ▼                                      ▼
 ┌─────────────────┐                  ┌──────────────────┐                    ┌─────────────────┐
-│ User Interface  │                  │ API Endpoints    │                    │ Capsules Table  │
+│ User Interface  │                  │ API Endpoints    │                    │ Vaults Table    │
 │ - Create Form   │                  │ - POST /create   │                    │ - id (UUID)     │
-│ - View Capsules │                  │ - GET /capsules  │                    │ - public_id     │
+│ - View Vaults   │                  │ - GET /capsules  │                    │ - public_id     │
 │ - Unlock Status │                  │ - GET /capsule/  │                    │ - name          │
 └─────────────────┘                  └──────────────────┘                    │ - email         │
                                                                              │ - title         │
@@ -28,88 +32,90 @@
                                                                              │ - is_unlocked   │
                                                                              └─────────────────┘
 ```
+
 ![Client Architecture](./Vault%20Frontend%20New/Temp_vault/src/assets/client.png)
-
 ![API Layer](./Vault%20Frontend%20New/Temp_vault/src/assets/api.png)
-
 ![Data Layer](./Vault%20Frontend%20New/Temp_vault/src/assets/data.png)
-
 ![Logic](./Vault%20Frontend%20New/Temp_vault/src/assets/logic.png)
 
+---
 
- 
-##  User Flow
+## Project Architecture (High-Level)
 
-```
-┌─────────────┐
-│   User      │
-│  Visits     │
-│  Website    │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│   Fills     │
-│ Capsule     │
-│   Form      │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐    ┌──────────────────┐
-│  Backend    │    │   Database       │
-│  Validates  │──> │   Stores         │
-│    Data     │    │   Capsule        │
-└──────┬──────┘    └──────────────────┘
-       │
-       ▼
-┌─────────────┐
-│  Returns    │
-│ Public ID   │
-│ & Unlock    │
-│   Date      │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│   User      │
-│   Gets      │
-│ Shareable   │
-│    Link     │
-└─────────────┘
-```
+### Frontend (React + Vite)
 
-##  Technology Stack
+* **Purpose**: User interface where users create and view vaults
+* **Why React**: Easy to build interactive UIs with reusable components
+* **Why Vite**: Fast development server with optimized builds
 
-### Backend (Rust)
-- **Framework**: Axum (async web framework)
-- **Database ORM**: SQLx (compile-time checked SQL)
-- **Validation**: Validator crate
-- **ID Generation**: Nanoid (for public IDs)
-- **CORS**: Tower-HTTP middleware
+### Backend (Rust + Axum)
+
+* **Purpose**: Handles business logic, validation, and database operations
+* **Why Rust**: Memory-safe, performant, and reliable for backend services
+* **Why Axum**: Modern, async Rust web framework suited for APIs
 
 ### Database (PostgreSQL)
-- **Primary Key**: UUID for internal ID
-- **Public Access**: Short nanoid for sharing
-- **Timestamps**: Timezone-aware dates
-- **Boolean Flags**: Track unlock/email status
 
-### Deployment
-- **Backend**: Render (cloud platform)
-- **Database**: PostgreSQL on Render
-- **Frontend**: React , Vite
+* **Purpose**: Stores all vault records
+* **Why PostgreSQL**: Reliable, supports timezone-aware timestamps for unlocking
 
-##  Data Flow
+---
+
+## Technology Stack
+
+### Frontend
+
+* **React Router DOM** – Navigation between pages
+* **Axios** – HTTP requests to backend
+* **Tailwind CSS** – Utility-first styling
+* **Lucide React** – Icons for UI
+* **Date-fns + React Day Picker** – Date handling and calendar UI
+
+### Backend (Rust)
+
+* **Axum** – Async web framework for routing and request handling
+* **SQLx** – Compile-time checked SQL queries
+* **Serde** – JSON serialization/deserialization
+* **Validator** – Input validation
+* **UUID + Nanoid** – Unique ID generation
+* **Tower-HTTP CORS** – Cross-origin request handling
+
+### Database (PostgreSQL)
+
+* **Primary Key**: UUID for internal ID
+* **Public Access**: Short nanoid for sharing
+* **Timestamps**: Timezone-aware dates
+* **Boolean Flags**: Track unlock/email status
+
+---
+
+## API Endpoints
+
+| Method | Endpoint              | Description                        |
+| ------ | --------------------- | ---------------------------------- |
+| GET    | `/`                   | Welcome page                       |
+| GET    | `/capsules`           | Get all vaults (messages filtered) |
+| GET    | `/capsule/:public_id` | Get specific vault                 |
+| POST   | `/create`             | Create new vault                   |
+
+---
+
+## Data Flow
+
+### Create Vault Flow
 
 ```
-CREATE CAPSULE FLOW:
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
 │   User      │────>│   Axum      │────>│ PostgreSQL  │────>│  Response   │
 │   Input     │     │ Validates   │     │   Stores    │     │ Public ID   │
-│             │     │ & Generates │     │  Capsule    │     │ + Unlock    │
+│             │     │ & Generates │     │  Vault      │     │ + Unlock    │
 │             │     │ Public ID   │     │             │     │   Date      │
 └─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
+```
 
-RETRIEVE CAPSULE FLOW:
+### Retrieve Vault Flow
+
+```
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
 │   Public    │────>│    Query    │────>│   Check     │───> │   Return    │
 │     ID      │     │  Database   │     │  Unlock     │     │  Message    │
@@ -118,43 +124,77 @@ RETRIEVE CAPSULE FLOW:
 └─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
 ```
 
-##  Security Features (Current & Potential)
+---
 
-### Current Implementation:
--  CORS protection
--  Input validation  
-- SQL injection protection (SQLx)
-- Public ID obfuscation (not sequential)
+## Key Features
 
-### Future Enhancements:
-- Message encryption at rest
-- Email notifications on unlock
-- Rate limiting
-- User authentication
+1. **Create Vault**
 
-##  Key Features
+   * User fills form: name, email, title, message, unlock date
+   * Two-step validation (frontend + backend)
+   * Generates unique public ID (nanoid)
+   * Stores in database with current timestamp
+   * Returns shareable link
 
-1. **Time-Locked Messages**: Content only accessible after unlock date
-2. **Public Sharing**: Shareable links via public ID
-3 **Timeline View**: See all capsules with unlock status
-4. **Responsive Design**: Works on mobile and desktop
+2. **View All Vaults**
 
-## Potential Improvements
+   * Fetch all vaults from database
+   * Shows locked/unlocked status
+   * Locked vaults hide messages
+   * Displays unlock dates and creation info
 
-- **Email Notifications**: Send reminder when capsule unlocks
-- **Rich Media**: Support images, videos in capsules  
-- **Social Features**: Share with friends/family
-- **Analytics**: Track creation/unlock patterns
-- **Mobile App**: Native iOS/Android versions
-- **Bulk Operations**: Create multiple capsules at once
+3. **Individual Vault View**
 
-## Business Value
+   * Access via unique public ID
+   * Locked: lock icon + hidden message
+   * Unlocked: full message content
+   * Shareable link support
 
-- **Personal Growth**: Reflection and goal tracking
-- **Memory Preservation**: Future messages for families
-- **Event Planning**: Messages for special occasions
-- **Educational**: Student projects and future career notes
+4. **Time-based Unlocking**
+
+   * Compares current time with `unlock_at` timestamp
+   * Backend determines unlock state
+   * Frontend displays UI accordingly
+
+5. **Responsive Design**
+
+   * Works across desktop and mobile devices
 
 ---
 
-*This project demonstrates full-stack development with modern Rust backend, database design, API development, and deployment practices.*
+## Security Features
+
+### Current
+
+* CORS protection
+* Input validation
+* SQL injection prevention (SQLx)
+* Public ID obfuscation
+
+### Potential Enhancements
+
+* Message encryption at rest
+* Email notifications on unlock
+* Rate limiting
+* User authentication
+
+---
+
+## Deployment
+
+* **Frontend**: Vercel – automatic deploy from Git, CDN-backed
+* **Backend**: Render – Rust server hosting
+* **Database**: PostgreSQL on Render
+
+---
+
+## Business Value
+
+* **Personal Growth**: Reflection and goal tracking
+* **Memory Preservation**: Store memories for future
+* **Event Planning**: Messages for special occasions
+* **Education**: Future notes for students or projects
+
+---
+
+*This project demonstrates a complete full-stack implementation with a modern Rust backend, database design, secure API development, and production deployment.*

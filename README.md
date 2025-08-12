@@ -2,7 +2,7 @@
 
 ## Project Concept
 
-**Future Vault** is a digital time capsule application that allows users to write messages or memories today, lock them until a future date they choose, and share them with others. The vault automatically unlocks on the specified date.
+**Future Vault** is an application that allows users to write messages or memories today, lock them until a future date they choose, and share them with others. The vault automatically unlocks on the specified date.
 Think of it like "a letter to your future self" or "a digital time capsule for memories."
 
 ---
